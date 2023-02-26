@@ -44,10 +44,10 @@ public class ProductService implements IProduct {
 
     @Override
     public String deleteProductByCode(int code) {
-        String message = "You are trying to eliminate a product that doesn't exists";
+        String message = "You are trying to delete a product that doesn't exists";
         if (productRepository.existsById(code)) {
             productRepository.deleteById(code);
-            message = "The product was eliminated successfully";
+            message = "The product was deleted successfully";
         }
         return message;
     }
