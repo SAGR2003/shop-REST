@@ -36,7 +36,7 @@ public class ProductController {
         ProductDTO productUpdate = productService.updateProduct(newProduct);
         return ResponseEntity.ok(productUpdate);
     }
-    @PutMapping(path = "/product/delete/{code}")
+    @DeleteMapping (path = "/product/delete/{code}")
     private ResponseEntity<ProductDTO> deleteProduct(@PathVariable int code){
         productService.deleteProductByCode(code);
         return ResponseEntity.ok(null);
