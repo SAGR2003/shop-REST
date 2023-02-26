@@ -1,7 +1,9 @@
 package com.shop.controller.dto;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.*;
+
+
 
 @Entity
 @Table(name = "products")
