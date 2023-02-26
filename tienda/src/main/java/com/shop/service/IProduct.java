@@ -8,4 +8,6 @@ public interface IProduct {
     List<ProductDTO> getAllProducts();
     ProductDTO getProductByCode(int code);
     ProductDTO createProduct(ProductDTO product);
+    ProductDTO updateProduct(ProductDTO productUpdate);
+    void deleteProductByCode(int code);
 }

@@ -26,4 +26,14 @@ public class ProductService implements IProduct{
     public ProductDTO createProduct(ProductDTO product) {
         return productRepository.save(product);
     }
+
+    @Override
+    public ProductDTO updateProduct(ProductDTO productUpdate) {
+        return productRepository.save(productUpdate);
+    }
+
+    @Override
+    public void deleteProductByCode(int code) {
+        productRepository.deleteById(code);
+    }
 }

@@ -1,9 +1,7 @@
 package com.shop.controller;
 
 import com.shop.controller.dto.ProductDTO;
-import com.shop.service.IProduct;
 import com.shop.service.ProductService;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,5 +28,17 @@ public class ProductController {
     private ResponseEntity<ProductDTO> createProduct(@RequestBody ProductDTO product){
         ProductDTO newProduct = productService.createProduct(product);
         return ResponseEntity.ok(newProduct);
+    }
+
+    @PutMapping(path = "/product/update/{code}")
+    private ResponseEntity<ProductDTO> updateProduct(@PathVariable int code, @RequestBody ProductDTO newProduct){
+        newProduct.setCode(code);
+        ProductDTO productUpdate = productService.updateProduct(newProduct);
+        return ResponseEntity.ok(productUpdate);
+    }
+    @PutMapping(path = "/product/delete/{code}")
+    private ResponseEntity<ProductDTO> deleteProduct(@PathVariable int code){
+        productService.deleteProductByCode(code);
+        return ResponseEntity.ok(null);
     }
 }
