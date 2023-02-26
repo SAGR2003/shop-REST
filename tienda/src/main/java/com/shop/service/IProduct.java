@@ -6,8 +6,12 @@ import java.util.List;
 
 public interface IProduct {
     List<ProductDTO> getAllProducts();
+
     ProductDTO getProductByCode(int code);
-    ProductDTO createProduct(ProductDTO product);
-    ProductDTO updateProduct(ProductDTO productUpdate);
-    void deleteProductByCode(int code);
+
+    String createProduct(ProductDTO product);
+
+    String updateProduct(ProductDTO productUpdate);
+
+    String deleteProductByCode(int code);
 }

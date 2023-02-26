@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class ProductService implements IProduct{
+public class ProductService implements IProduct {
     @Autowired
     private ProductRepository productRepository;
 
@@ -23,17 +23,32 @@ public class ProductService implements IProduct{
     }
 
     @Override
-    public ProductDTO createProduct(ProductDTO product) {
-        return productRepository.save(product);
+    public String createProduct(ProductDTO product) {
+        String message = "That code already exists";
+        if (!productRepository.existsById(product.getCode())) {
+            productRepository.save(product);
+            message = "The product was created successfully";
+        }
+        return message;
     }
 
     @Override
-    public ProductDTO updateProduct(ProductDTO productUpdate) {
-        return productRepository.save(productUpdate);
+    public String updateProduct(ProductDTO productUpdate) {
+        String message = "You are trying to update a product that doesn't exists";
+        if (productRepository.existsById(productUpdate.getCode())) {
+            productRepository.save(productUpdate);
+            message = "The product was updated successfully";
+        }
+        return message;
     }
 
     @Override
-    public void deleteProductByCode(int code) {
-        productRepository.deleteById(code);
+    public String deleteProductByCode(int code) {
+        String message = "You are trying to eliminate a product that doesn't exists";
+        if (productRepository.existsById(code)) {
+            productRepository.deleteById(code);
+            message = "The product was eliminated successfully";
+        }
+        return message;
     }
 }

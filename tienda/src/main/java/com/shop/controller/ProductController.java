@@ -12,6 +12,7 @@ import java.util.List;
 public class ProductController {
     @Autowired
     private ProductService productService;
+
     @GetMapping(path = "/products/all")
     private ResponseEntity<List<ProductDTO>> getAllProducts() {
         List<ProductDTO> products = productService.getAllProducts();
@@ -19,26 +20,24 @@ public class ProductController {
     }
 
     @GetMapping(path = "/product/{code}")
-    private ResponseEntity<ProductDTO> getProduct(@PathVariable int code){
+    private ResponseEntity<ProductDTO> getProduct(@PathVariable int code) {
         ProductDTO product = productService.getProductByCode(code);
         return ResponseEntity.ok(product);
     }
 
     @PostMapping(path = "/product/create")
-    private ResponseEntity<ProductDTO> createProduct(@RequestBody ProductDTO product){
-        ProductDTO newProduct = productService.createProduct(product);
-        return ResponseEntity.ok(newProduct);
+    private ResponseEntity<String> createProduct(@RequestBody ProductDTO product) {
+        return ResponseEntity.ok(productService.createProduct(product));
     }
 
     @PutMapping(path = "/product/update/{code}")
-    private ResponseEntity<ProductDTO> updateProduct(@PathVariable int code, @RequestBody ProductDTO newProduct){
+    private ResponseEntity<String> updateProduct(@PathVariable int code, @RequestBody ProductDTO newProduct) {
         newProduct.setCode(code);
-        ProductDTO productUpdate = productService.updateProduct(newProduct);
-        return ResponseEntity.ok(productUpdate);
+        return ResponseEntity.ok(productService.updateProduct(newProduct));
     }
-    @DeleteMapping (path = "/product/delete/{code}")
-    private ResponseEntity<ProductDTO> deleteProduct(@PathVariable int code){
-        productService.deleteProductByCode(code);
-        return ResponseEntity.ok(null);
+
+    @DeleteMapping(path = "/product/delete/{code}")
+    private ResponseEntity<String> deleteProduct(@PathVariable int code) {
+        return ResponseEntity.ok(productService.deleteProductByCode(code));
     }
 }
