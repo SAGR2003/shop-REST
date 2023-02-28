@@ -3,6 +3,7 @@ package com.shop.controller;
 import com.shop.model.ShoppingCart;
 import com.shop.service.CartService;
 import com.shop.service.ProductService;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,24 +15,24 @@ public class ShoppingCartController {
     private CartService cartService;
     @Autowired
     private ProductService productService;
-
-    @GetMapping(path = "/{id}")
-    private ResponseEntity<ShoppingCart> getCart(@PathVariable int id) {
-        return ResponseEntity.ok(cartService.getCartById(id));
+    @Operation(summary = "Get shopping cart by id")
+    @GetMapping(path = "/{idCart}")
+    private ResponseEntity<ShoppingCart> getCart(@PathVariable int idCart) {
+        return ResponseEntity.ok(cartService.getCartById(idCart));
     }
-
+    @Operation(summary = "Create shopping cart")
     @PostMapping(path = "/create")
     private ResponseEntity<String> createCart(@RequestBody ShoppingCart shoppingCart) {
         return ResponseEntity.ok(cartService.createCart(shoppingCart));
     }
-
-    @PutMapping(path = "/{id}/add/{code}/{quantity}")
-    private ResponseEntity<String> addProduct(@PathVariable int id, @PathVariable int code, @PathVariable int quantity) {
-        return ResponseEntity.ok(cartService.addToCart(id, quantity, productService.getProductByCode(code)));
+    @Operation(summary = "Add item to shopping cart")
+    @PutMapping(path = "/{idCart}/add/{codeProduct}/{quantity}")
+    private ResponseEntity<String> addProduct(@PathVariable int idCart, @PathVariable int codeProduct, @PathVariable int quantity) {
+        return ResponseEntity.ok(cartService.addToCart(idCart, quantity, productService.getProductByCode(codeProduct)));
     }
-
-    @PutMapping(path = "/{id}/remove/{code}")
-    private ResponseEntity<String> removeProduct(@PathVariable int id, @PathVariable int code) {
-        return ResponseEntity.ok(cartService.removeFromCart(cartService.getCartById(id), code));
+    @Operation(summary = "Remove product by id from shopping cart")
+    @PutMapping(path = "/{idCart}/remove/{codeProduct}")
+    private ResponseEntity<String> removeProduct(@PathVariable int idCart, @PathVariable int codeProduct) {
+        return ResponseEntity.ok(cartService.removeFromCart(cartService.getCartById(idCart), codeProduct));
     }
 }

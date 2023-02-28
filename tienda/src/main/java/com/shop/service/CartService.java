@@ -47,7 +47,7 @@ public class CartService implements ICart {
     @Override
     public String removeFromCart(ShoppingCart cart, int code) {
         CartItem itemToRemove = cartItemRepository.getById(code);
-        String message = "You are trying to use a cart that doesn't exists";
+        String message = "You are trying to use a cart that doesn't exist";
 
         if (cartRepository.existsById(cart.getId())) {
             if (cart.getCartItems().contains(itemToRemove)) {

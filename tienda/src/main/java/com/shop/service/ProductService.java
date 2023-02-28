@@ -34,7 +34,7 @@ public class ProductService implements IProduct {
 
     @Override
     public String updateProduct(ProductDTO productUpdate) {
-        String message = "You are trying to update a product that doesn't exists";
+        String message = "You are trying to update a product that doesn't exist";
         if (productRepository.existsById(productUpdate.getCode())) {
             productRepository.save(productUpdate);
             message = "The product was updated successfully";
@@ -44,7 +44,7 @@ public class ProductService implements IProduct {
 
     @Override
     public String deleteProductByCode(int code) {
-        String message = "You are trying to delete a product that doesn't exists";
+        String message = "You are trying to delete a product that doesn't exist";
         if (productRepository.existsById(code)) {
             productRepository.deleteById(code);
             message = "The product was deleted successfully";
