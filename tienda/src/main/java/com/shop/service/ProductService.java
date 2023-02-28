@@ -51,4 +51,18 @@ public class ProductService implements IProduct {
         }
         return message;
     }
+
+    public String createExampleProducts() {
+        String message = "You already have some products";
+        ProductDTO example1 = new ProductDTO(1, "Gansito", 1000, 3);
+        ProductDTO example2 = new ProductDTO(2, "Chocoramo", 2400, 5);
+        ProductDTO example3 = new ProductDTO(3, "Ponky", 1000, 10);
+        if (getAllProducts().isEmpty()) {
+            productRepository.save(example1);
+            productRepository.save(example2);
+            productRepository.save(example3);
+            message = "The example products were created successfully";
+        }
+        return message;
+    }
 }
