@@ -1,8 +1,7 @@
 package com.shop.controller;
 
-import com.shop.controller.dto.ProductDTO;
+import com.shop.model.Product;
 import com.shop.service.ProductService;
-import io.swagger.annotations.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,24 +16,24 @@ public class ProductController {
     private ProductService productService;
     @Operation(summary = "Get all products")
     @GetMapping(path = "/all")
-    private ResponseEntity<List<ProductDTO>> getAllProducts() {
-        List<ProductDTO> products = productService.getAllProducts();
+    private ResponseEntity<List<Product>> getAllProducts() {
+        List<Product> products = productService.getAllProducts();
         return ResponseEntity.ok(products);
     }
     @Operation(summary = "Get product by code")
     @GetMapping(path = "/{code}")
-    private ResponseEntity<ProductDTO> getProduct(@PathVariable int code) {
-        ProductDTO product = productService.getProductByCode(code);
+    private ResponseEntity<Product> getProduct(@PathVariable int code) {
+        Product product = productService.getProductByCode(code);
         return ResponseEntity.ok(product);
     }
     @Operation(summary = "Create product")
     @PostMapping(path = "/create")
-    private ResponseEntity<String> createProduct(@RequestBody ProductDTO product) {
+    private ResponseEntity<String> createProduct(@RequestBody Product product) {
         return ResponseEntity.ok(productService.createProduct(product));
     }
     @Operation(summary = "Update product by code")
     @PutMapping(path = "/update/{code}")
-    private ResponseEntity<String> updateProduct(@PathVariable int code, @RequestBody ProductDTO newProduct) {
+    private ResponseEntity<String> updateProduct(@PathVariable int code, @RequestBody Product newProduct) {
         newProduct.setCode(code);
         return ResponseEntity.ok(productService.updateProduct(newProduct));
     }

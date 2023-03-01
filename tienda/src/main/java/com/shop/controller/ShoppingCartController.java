@@ -35,4 +35,10 @@ public class ShoppingCartController {
     private ResponseEntity<String> removeProduct(@PathVariable int idCart, @PathVariable int codeProduct) {
         return ResponseEntity.ok(cartService.removeFromCart(cartService.getCartById(idCart), codeProduct));
     }
+
+    @Operation(summary = "Sell products from a specific cart")
+    @GetMapping(path = "/{idCart}/sell")
+    private ResponseEntity<String> makeSell(@PathVariable int idCart) {
+        return ResponseEntity.ok(cartService.makeSale(cartService.getCartById(idCart)));
+    }
 }

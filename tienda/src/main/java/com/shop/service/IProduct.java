@@ -1,17 +1,17 @@
 package com.shop.service;
 
-import com.shop.controller.dto.ProductDTO;
+import com.shop.model.Product;
 
 import java.util.List;
 
 public interface IProduct {
-    List<ProductDTO> getAllProducts();
+    List<Product> getAllProducts();
 
-    ProductDTO getProductByCode(int code);
+    Product getProductByCode(int code);
 
-    String createProduct(ProductDTO product);
+    String createProduct(Product product);
 
-    String updateProduct(ProductDTO productUpdate);
+    String updateProduct(Product productUpdate);
 
     String deleteProductByCode(int code);
 }

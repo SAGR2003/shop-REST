@@ -1,7 +1,6 @@
 package com.shop.model;
 
 import javax.persistence.*;
-
 import lombok.*;
 
 @Entity

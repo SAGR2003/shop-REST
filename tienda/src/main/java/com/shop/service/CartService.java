@@ -1,12 +1,15 @@
 package com.shop.service;
 
-import com.shop.controller.dto.ProductDTO;
+import com.shop.model.Product;
 import com.shop.model.CartItem;
 import com.shop.model.ShoppingCart;
 import com.shop.repository.CartItemRepository;
 import com.shop.repository.CartRepository;
+import com.shop.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class CartService implements ICart {
@@ -14,6 +17,8 @@ public class CartService implements ICart {
     private CartRepository cartRepository;
     @Autowired
     private CartItemRepository cartItemRepository;
+    @Autowired
+    private ProductRepository productRepository;
 
     @Override
     public ShoppingCart getCartById(int id) {
@@ -31,7 +36,7 @@ public class CartService implements ICart {
     }
 
     @Override
-    public String addToCart(int idFromCart, int quantity, ProductDTO product) {
+    public String addToCart(int idFromCart, int quantity, Product product) {
         ShoppingCart cart;
         CartItem cartItem = convertProductToCartItem(product, quantity);
         String message;
@@ -62,11 +67,34 @@ public class CartService implements ICart {
     }
 
     @Override
-    public String makeSale() {
-        return null;
+    public String makeSale(ShoppingCart cart) {
+        List<CartItem> soldItems = cart.getCartItems();
+        StringBuilder messageBuilder = new StringBuilder("Products sold: ");
+
+        for (CartItem soldItem : soldItems) {
+            Product product = productRepository.findById(soldItem.getProductCode()).get();
+            int soldQuantity = soldItem.getQuantity();
+
+            updateStock(product, soldQuantity);
+
+            messageBuilder.append(soldQuantity);
+            messageBuilder.append("x ");
+            messageBuilder.append(product.getName());
+            messageBuilder.append(", ");
+        }
+        messageBuilder.setLength(messageBuilder.length() - 2);
+
+        return messageBuilder.toString();
     }
 
-    private CartItem convertProductToCartItem(ProductDTO product, int quantity) {
+    private void updateStock(Product product, int soldQuantity) {
+        int currentStock = product.getStock();
+        int newStock = currentStock - soldQuantity;
+        product.setStock(newStock);
+        productRepository.save(product);
+    }
+
+    private CartItem convertProductToCartItem(Product product, int quantity) {
         CartItem cartItem = new CartItem(product.getCode(), product.getName(), quantity, product.getUnitValue());
         cartItemRepository.save(cartItem);
         return cartItem;

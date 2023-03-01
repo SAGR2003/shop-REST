@@ -1,6 +1,6 @@
 package com.shop.service;
 
-import com.shop.controller.dto.ProductDTO;
+import com.shop.model.Product;
 import com.shop.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,17 +13,17 @@ public class ProductService implements IProduct {
     private ProductRepository productRepository;
 
     @Override
-    public List<ProductDTO> getAllProducts() {
+    public List<Product> getAllProducts() {
         return productRepository.findAll();
     }
 
     @Override
-    public ProductDTO getProductByCode(int code) {
+    public Product getProductByCode(int code) {
         return productRepository.findById(code).get();
     }
 
     @Override
-    public String createProduct(ProductDTO product) {
+    public String createProduct(Product product) {
         String message = "That code already exists";
         if (!productRepository.existsById(product.getCode())) {
             productRepository.save(product);
@@ -33,7 +33,7 @@ public class ProductService implements IProduct {
     }
 
     @Override
-    public String updateProduct(ProductDTO productUpdate) {
+    public String updateProduct(Product productUpdate) {
         String message = "You are trying to update a product that doesn't exist";
         if (productRepository.existsById(productUpdate.getCode())) {
             productRepository.save(productUpdate);
@@ -54,9 +54,9 @@ public class ProductService implements IProduct {
 
     public String createExampleProducts() {
         String message = "You already have some products";
-        ProductDTO example1 = new ProductDTO(1, "Gansito", 1000, 3);
-        ProductDTO example2 = new ProductDTO(2, "Chocoramo", 2400, 5);
-        ProductDTO example3 = new ProductDTO(3, "Ponky", 1000, 10);
+        Product example1 = new Product(1, "Gansito", 1000, 3);
+        Product example2 = new Product(2, "Chocoramo", 2400, 5);
+        Product example3 = new Product(3, "Ponky", 1000, 10);
         if (getAllProducts().isEmpty()) {
             productRepository.save(example1);
             productRepository.save(example2);
