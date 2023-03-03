@@ -9,9 +9,9 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class CartItem {
     @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    public int itemId;
-
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private int itemId;
     private int productCode;
     private String productName;
     private int quantity;

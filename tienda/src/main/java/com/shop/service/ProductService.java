@@ -19,7 +19,11 @@ public class ProductService implements IProduct {
 
     @Override
     public Product getProductByCode(int code) {
-        return productRepository.findById(code).get();
+        Product product = new Product();
+        if (productRepository.existsById(code)) {
+            product = productRepository.findById(code).get();
+        }
+        return product;
     }
 
     @Override
