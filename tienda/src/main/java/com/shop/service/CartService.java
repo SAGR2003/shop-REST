@@ -44,7 +44,7 @@ public class CartService implements ICart {
         ShoppingCart cart;
         String error = validationsAddToCart(product, idFromCart, quantity);
         String message = error;
-        if (error == null) {
+        if (null == error) {
             cart = cartRepository.getById(idFromCart);
             CartItem cartItem = updateCartItem(cart, product, quantity);
             cart.getCartItems().add(cartItem);
@@ -56,10 +56,10 @@ public class CartService implements ICart {
 
     @Override
     public String removeFromCart(ShoppingCart cart, int code) {
-        CartItem itemToRemove = cartItemRepository.getById(code);
+        CartItem itemToRemove = findItemByProductCode(cart, code);
         String error = validationsRemoveFromCart(cart, itemToRemove);
         String message = error;
-        if (error == null) {
+        if (null == error) {
             cart.cartItems.remove(itemToRemove);
             cartRepository.save(cart);
             message = "The product was removed successfully";
@@ -70,20 +70,29 @@ public class CartService implements ICart {
     @Override
     public String makeSale(ShoppingCart cart) {
         List<CartItem> soldItems = cart.getCartItems();
-        StringBuilder productsSold = new StringBuilder("Products sold: ");
+        StringBuilder productsSold = new StringBuilder();
         Product product;
+
+        if (null == soldItems){
+            productsSold.append("There are no products on that cart");
+            return productsSold.toString();
+        }
+
+        productsSold.append("Products sold: ");
         for (CartItem soldItem : soldItems) {
             product = productRepository.findById(soldItem.getProductCode()).get();
             int soldQuantity = soldItem.getQuantity();
             if (enoughStock(product, soldQuantity)) {
                 updateStock(product, soldQuantity);
                 productsSold.append(soldQuantity).append("x ").append(product.getName()).append(", ");
+                cartRepository.delete(cart);
             } else {
                 productsSold.setLength(0);
-                productsSold.append("There is not enough stock for the product: " + product);
+                productsSold.append("There is not enough stock for the product: " + product).append("  ");
             }
         }
         productsSold.setLength(productsSold.length() - 2);
+
         return productsSold.toString();
     }
 
@@ -95,24 +104,19 @@ public class CartService implements ICart {
     }
 
     private CartItem updateCartItem(ShoppingCart cart, Product product, int quantity) {
-        List<CartItem> cartItems = cart.getCartItems();
         CartItem cartItem;
-        boolean found = false;
+        CartItem item;
 
-        for (CartItem item : cartItems) {
-            if (item.getProductCode() == product.getCode()) {
-                item.setQuantity(item.getQuantity() + quantity);
-                item.setAmount(item.getAmount() + quantity * product.getUnitValue());
-                cartItemRepository.save(item);
-                found = true;
-                return item;
-            }
-        }
-        if (!found) {
+        item = findItemByProductCode(cart, product.getCode());
+        if (null != item) {
+            item.setQuantity(item.getQuantity() + quantity);
+            item.setAmount(item.getAmount() + quantity * product.getUnitValue());
+            cartItemRepository.save(item);
+            return item;
+        } else {
             cartItem = convertProductToCartItem(product, quantity);
             return cartItem;
         }
-        return null;
     }
 
     private CartItem convertProductToCartItem(Product product, int quantity) {
@@ -147,6 +151,16 @@ public class CartService implements ICart {
             messageError = "You are trying to remove a product that isn't at your cart";
         }
         return messageError;
+    }
+
+    private CartItem findItemByProductCode(ShoppingCart cart, int productCode) {
+        List<CartItem> cartItems = cart.getCartItems();
+        for (CartItem item : cartItems) {
+            if (item.getProductCode() == productCode) {
+                return item;
+            }
+        }
+        return null;
     }
 
     public boolean productExists(int productCode) {
