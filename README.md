@@ -20,6 +20,6 @@
 <h3>Modelo de datos:</h3>
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/105022427/222629574-07c70d28-eaed-4ece-a2ac-6b79a17408fe.png">
+  <img width="580" src="https://user-images.githubusercontent.com/105068316/222827173-06eae832-6261-4f8b-8e5c-8436e14c0142.png">
 </p>
 
