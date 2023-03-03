@@ -22,13 +22,17 @@ public class CartService implements ICart {
 
     @Override
     public ShoppingCart getCartById(int id) {
-        return cartRepository.findById(id).get();
+        ShoppingCart shoppingCart = new ShoppingCart();
+        if (cartRepository.existsById(id)) {
+            shoppingCart = cartRepository.findById(id).get();
+        }
+        return shoppingCart;
     }
 
     @Override
     public String createCart(ShoppingCart cart) {
         String message = "That id already exists";
-        if (!cartRepository.existsById(cart.getId())) {
+        if (!cartExists(cart.getId())) {
             cartRepository.save(cart);
             message = "The shopping cart was created successfully";
         }
@@ -38,30 +42,27 @@ public class CartService implements ICart {
     @Override
     public String addToCart(int idFromCart, int quantity, Product product) {
         ShoppingCart cart;
-        CartItem cartItem = convertProductToCartItem(product, quantity);
-        String message;
-
-        cart = cartRepository.getById(idFromCart);
-        cart.getCartItems().add(cartItem);
-        message = "The product was added successfully";
-        cartRepository.save(cart);
-
+        String error = validationsAddToCart(product, idFromCart, quantity);
+        String message = error;
+        if (error == null) {
+            cart = cartRepository.getById(idFromCart);
+            CartItem cartItem = updateCartItem(cart, product, quantity);
+            cart.getCartItems().add(cartItem);
+            message = "The product was added successfully";
+            cartRepository.save(cart);
+        }
         return message;
     }
 
     @Override
     public String removeFromCart(ShoppingCart cart, int code) {
         CartItem itemToRemove = cartItemRepository.getById(code);
-        String message = "You are trying to use a cart that doesn't exist";
-
-        if (cartRepository.existsById(cart.getId())) {
-            if (cart.getCartItems().contains(itemToRemove)) {
-                cart.cartItems.remove(itemToRemove);
-                cartRepository.save(cart);
-                message = "The product was removed successfully";
-            } else {
-                message = "You are trying to remove a product that isn't at your cart";
-            }
+        String error = validationsRemoveFromCart(cart, itemToRemove);
+        String message = error;
+        if (error == null) {
+            cart.cartItems.remove(itemToRemove);
+            cartRepository.save(cart);
+            message = "The product was removed successfully";
         }
         return message;
     }
@@ -69,22 +70,21 @@ public class CartService implements ICart {
     @Override
     public String makeSale(ShoppingCart cart) {
         List<CartItem> soldItems = cart.getCartItems();
-        StringBuilder messageBuilder = new StringBuilder("Products sold: ");
-
+        StringBuilder productsSold = new StringBuilder("Products sold: ");
+        Product product;
         for (CartItem soldItem : soldItems) {
-            Product product = productRepository.findById(soldItem.getProductCode()).get();
+            product = productRepository.findById(soldItem.getProductCode()).get();
             int soldQuantity = soldItem.getQuantity();
-
-            updateStock(product, soldQuantity);
-
-            messageBuilder.append(soldQuantity);
-            messageBuilder.append("x ");
-            messageBuilder.append(product.getName());
-            messageBuilder.append(", ");
+            if (enoughStock(product, soldQuantity)) {
+                updateStock(product, soldQuantity);
+                productsSold.append(soldQuantity).append("x ").append(product.getName()).append(", ");
+            } else {
+                productsSold.setLength(0);
+                productsSold.append("There is not enough stock for the product: " + product);
+            }
         }
-        messageBuilder.setLength(messageBuilder.length() - 2);
-
-        return messageBuilder.toString();
+        productsSold.setLength(productsSold.length() - 2);
+        return productsSold.toString();
     }
 
     private void updateStock(Product product, int soldQuantity) {
@@ -94,9 +94,74 @@ public class CartService implements ICart {
         productRepository.save(product);
     }
 
+    private CartItem updateCartItem(ShoppingCart cart, Product product, int quantity) {
+        List<CartItem> cartItems = cart.getCartItems();
+        CartItem cartItem;
+        boolean found = false;
+
+        for (CartItem item : cartItems) {
+            if (item.getProductCode() == product.getCode()) {
+                item.setQuantity(item.getQuantity() + quantity);
+                item.setAmount(item.getAmount() + quantity * product.getUnitValue());
+                cartItemRepository.save(item);
+                found = true;
+                return item;
+            }
+        }
+        if (!found) {
+            cartItem = convertProductToCartItem(product, quantity);
+            return cartItem;
+        }
+        return null;
+    }
+
     private CartItem convertProductToCartItem(Product product, int quantity) {
-        CartItem cartItem = new CartItem(product.getCode(), product.getName(), quantity, product.getUnitValue());
+        CartItem cartItem = new CartItem();
+        cartItem.setProductCode(product.getCode());
+        cartItem.setProductName(product.getName());
+        cartItem.setQuantity(quantity);
+        cartItem.setAmount(product.getUnitValue() * quantity);
         cartItemRepository.save(cartItem);
         return cartItem;
+    }
+
+    private String validationsAddToCart(Product product, int idFromCart, int quantity) {
+        String messageError = null;
+
+        if (!productExists(product.getCode())) {
+            messageError = "The product doesn't exist";
+        } else if (!cartExists(idFromCart)) {
+            messageError = "The cart doesn't exist";
+        } else if (!enoughStock(product, quantity)) {
+            messageError = "There is not enough stock for the product";
+        }
+        return messageError;
+    }
+
+    private String validationsRemoveFromCart(ShoppingCart cart, CartItem itemToRemove) {
+        String messageError = null;
+
+        if (!cartExists(cart.getId())) {
+            messageError = "You are trying to use a cart that doesn't exist";
+        } else if (!cartContainsItem(cart, itemToRemove)) {
+            messageError = "You are trying to remove a product that isn't at your cart";
+        }
+        return messageError;
+    }
+
+    public boolean productExists(int productCode) {
+        return productRepository.existsById(productCode);
+    }
+
+    private boolean cartExists(int cartId) {
+        return cartRepository.existsById(cartId);
+    }
+
+    private boolean enoughStock(Product product, int quantity) {
+        return product.getStock() >= quantity;
+    }
+
+    private boolean cartContainsItem(ShoppingCart cart, CartItem item) {
+        return cart.getCartItems().contains(item);
     }
 }
