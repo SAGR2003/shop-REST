@@ -16,3 +16,8 @@
 
 
 <h3>Modelo de datos:</h3>
+
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/105022427/222629574-07c70d28-eaed-4ece-a2ac-6b79a17408fe.png">
+</p>
+
