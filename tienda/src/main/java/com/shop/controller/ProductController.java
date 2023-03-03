@@ -15,7 +15,7 @@ public class ProductController {
     @Autowired
     private ProductService productService;
     @Operation(summary = "Get all products")
-    @GetMapping(path = "/all")
+    @GetMapping(path = "")
     private ResponseEntity<List<Product>> getAllProducts() {
         List<Product> products = productService.getAllProducts();
         return ResponseEntity.ok(products);
@@ -27,23 +27,23 @@ public class ProductController {
         return ResponseEntity.ok(product);
     }
     @Operation(summary = "Create product")
-    @PostMapping(path = "/create")
+    @PostMapping(path = "")
     private ResponseEntity<String> createProduct(@RequestBody Product product) {
         return ResponseEntity.ok(productService.createProduct(product));
     }
     @Operation(summary = "Update product by code")
-    @PutMapping(path = "/update/{code}")
+    @PutMapping(path = "/{code}")
     private ResponseEntity<String> updateProduct(@PathVariable int code, @RequestBody Product newProduct) {
         newProduct.setCode(code);
         return ResponseEntity.ok(productService.updateProduct(newProduct));
     }
     @Operation(summary = "Delete product by code")
-    @DeleteMapping(path = "/delete/{code}")
+    @DeleteMapping(path = "/{code}")
     private ResponseEntity<String> deleteProduct(@PathVariable int code) {
         return ResponseEntity.ok(productService.deleteProductByCode(code));
     }
     @Operation(summary = "Create example products")
-    @PostMapping(path = "/createExampleProducts")
+    @PostMapping(path = "/examples")
     private ResponseEntity<String> createExampleProducts() {
         return ResponseEntity.ok(productService.createExampleProducts());
     }
