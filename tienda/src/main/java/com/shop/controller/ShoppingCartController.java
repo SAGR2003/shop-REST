@@ -21,17 +21,17 @@ public class ShoppingCartController {
         return ResponseEntity.ok(cartService.getCartById(idCart));
     }
     @Operation(summary = "Create shopping cart")
-    @PostMapping(path = "/create")
+    @PostMapping(path = "")
     private ResponseEntity<String> createCart(@RequestBody ShoppingCart shoppingCart) {
         return ResponseEntity.ok(cartService.createCart(shoppingCart));
     }
     @Operation(summary = "Add item to shopping cart")
-    @PutMapping(path = "/{idCart}/add/{codeProduct}/{quantity}")
+    @PutMapping(path = "/{idCart}/{codeProduct}/{quantity}")
     private ResponseEntity<String> addProduct(@PathVariable int idCart, @PathVariable int codeProduct, @PathVariable int quantity) {
         return ResponseEntity.ok(cartService.addToCart(idCart, quantity, productService.getProductByCode(codeProduct)));
     }
     @Operation(summary = "Remove product by id from shopping cart")
-    @PutMapping(path = "/{idCart}/remove/{codeProduct}")
+    @PutMapping(path = "/{idCart}/{codeProduct}")
     private ResponseEntity<String> removeProduct(@PathVariable int idCart, @PathVariable int codeProduct) {
         return ResponseEntity.ok(cartService.removeFromCart(cartService.getCartById(idCart), codeProduct));
     }
