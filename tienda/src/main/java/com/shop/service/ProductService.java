@@ -2,14 +2,15 @@ package com.shop.service;
 
 import com.shop.model.Product;
 import com.shop.repository.ProductRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@AllArgsConstructor
 public class ProductService implements IProduct {
-    @Autowired
     private ProductRepository productRepository;
 
     @Override
