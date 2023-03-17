@@ -6,18 +6,17 @@ import com.shop.model.ShoppingCart;
 import com.shop.repository.CartItemRepository;
 import com.shop.repository.CartRepository;
 import com.shop.repository.ProductRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@AllArgsConstructor
 public class CartService implements ICart {
-    @Autowired
     private CartRepository cartRepository;
-    @Autowired
     private CartItemRepository cartItemRepository;
-    @Autowired
     private ProductRepository productRepository;
 
     @Override
