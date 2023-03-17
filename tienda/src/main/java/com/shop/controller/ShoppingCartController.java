@@ -4,16 +4,16 @@ import com.shop.model.ShoppingCart;
 import com.shop.service.CartService;
 import com.shop.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/carts")
+@AllArgsConstructor
 public class ShoppingCartController {
-    @Autowired
     private CartService cartService;
-    @Autowired
     private ProductService productService;
     @Operation(summary = "Get shopping cart by id")
     @GetMapping(path = "/{idCart}")
