@@ -3,6 +3,7 @@ package com.shop.controller;
 import com.shop.model.Product;
 import com.shop.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,8 +12,8 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/products")
+@AllArgsConstructor
 public class ProductController {
-    @Autowired
     private ProductService productService;
     @Operation(summary = "Get all products")
     @GetMapping(path = "")
