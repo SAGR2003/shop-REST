@@ -6,6 +6,9 @@ spring:
     password: Software_Architecture2023#
   jpa:
     database-platform: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
