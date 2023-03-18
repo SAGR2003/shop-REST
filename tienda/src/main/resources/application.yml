@@ -1,0 +1,13 @@
+spring:
+  datasource:
+    url: jdbc:mysql://156.67.72.101:3306/u117615979_tienda
+    driverClassName: com.mysql.cj.jdbc.Driver
+    username: u117615979_tienda_user
+    password: Software_Architecture2023#
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+server:
+  port: 8081
