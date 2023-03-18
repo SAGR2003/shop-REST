@@ -4,8 +4,6 @@ import com.shop.model.Product;
 import com.shop.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,37 +13,43 @@ import java.util.List;
 @AllArgsConstructor
 public class ProductController {
     private ProductService productService;
+
     @Operation(summary = "Get all products")
     @GetMapping(path = "")
-    private ResponseEntity<List<Product>> getAllProducts() {
+    private List<Product> getAllProducts() {
         List<Product> products = productService.getAllProducts();
-        return ResponseEntity.ok(products);
+        return products;
     }
+
     @Operation(summary = "Get product by code")
     @GetMapping(path = "/{code}")
-    private ResponseEntity<Product> getProduct(@PathVariable int code) {
+    private Product getProduct(@PathVariable int code) {
         Product product = productService.getProductByCode(code);
-        return ResponseEntity.ok(product);
+        return product;
     }
+
     @Operation(summary = "Create product")
     @PostMapping(path = "")
-    private ResponseEntity<String> createProduct(@RequestBody Product product) {
-        return ResponseEntity.ok(productService.createProduct(product));
+    private String createProduct(@RequestBody Product product) {
+        return productService.createProduct(product);
     }
+
     @Operation(summary = "Update product by code")
     @PutMapping(path = "/{code}")
-    private ResponseEntity<String> updateProduct(@PathVariable int code, @RequestBody Product newProduct) {
+    private String updateProduct(@PathVariable int code, @RequestBody Product newProduct) {
         newProduct.setCode(code);
-        return ResponseEntity.ok(productService.updateProduct(newProduct));
+        return productService.updateProduct(newProduct);
     }
+
     @Operation(summary = "Delete product by code")
     @DeleteMapping(path = "/{code}")
-    private ResponseEntity<String> deleteProduct(@PathVariable int code) {
-        return ResponseEntity.ok(productService.deleteProductByCode(code));
+    private String deleteProduct(@PathVariable int code) {
+        return productService.deleteProductByCode(code);
     }
+
     @Operation(summary = "Create example products")
     @PostMapping(path = "/examples")
-    private ResponseEntity<String> createExampleProducts() {
-        return ResponseEntity.ok(productService.createExampleProducts());
+    private String createExampleProducts() {
+        return productService.createExampleProducts();
     }
 }
