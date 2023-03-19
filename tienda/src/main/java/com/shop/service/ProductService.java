@@ -3,8 +3,8 @@ package com.shop.service;
 import com.shop.model.Product;
 import com.shop.repository.ProductRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import java.sql.Date;
 
 import java.util.List;
 
@@ -31,6 +31,7 @@ public class ProductService implements IProduct {
     public String createProduct(Product product) {
         String message = "That code already exists";
         if (!productRepository.existsById(product.getCode())) {
+            product.setDateCreated(new Date(System.currentTimeMillis()));
             productRepository.save(product);
             message = "The product was created successfully";
         }
@@ -41,6 +42,8 @@ public class ProductService implements IProduct {
     public String updateProduct(Product productUpdate) {
         String message = "You are trying to update a product that doesn't exist";
         if (productRepository.existsById(productUpdate.getCode())) {
+            productUpdate.setDateCreated(new Date(System.currentTimeMillis()));
+
             productRepository.save(productUpdate);
             message = "The product was updated successfully";
         }
@@ -59,13 +62,11 @@ public class ProductService implements IProduct {
 
     public String createExampleProducts() {
         String message = "You already have some products";
-        Product example1 = new Product(1, "Gansito", 1000, 3);
-        Product example2 = new Product(2, "Chocoramo", 2400, 5);
-        Product example3 = new Product(3, "Ponky", 1000, 10);
         if (getAllProducts().isEmpty()) {
-            productRepository.save(example1);
-            productRepository.save(example2);
-            productRepository.save(example3);
+            Date dateCreated = new Date(System.currentTimeMillis());
+            productRepository.save(new Product(1, "Gansito", 1000, 3, dateCreated));
+            productRepository.save(new Product(2, "Chocoramo", 2400, 5, dateCreated));
+            productRepository.save(new Product(3, "Ponky", 1000, 10, dateCreated));
             message = "The example products were created successfully";
         }
         return message;
