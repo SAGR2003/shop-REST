@@ -5,15 +5,16 @@ import javax.persistence.*;
 
 @Entity
 @Data
+@Table (name = "SALE_PRODUCT")
 @AllArgsConstructor
 @NoArgsConstructor
 public class CartItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "ID")
     private int itemId;
+    @Column(name = "PRODUCT")
     private int productCode;
-    private String productName;
+    @Column(name = "QUANTITY")
     private int quantity;
-    private double amount;
 }

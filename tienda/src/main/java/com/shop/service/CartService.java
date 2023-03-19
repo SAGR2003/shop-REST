@@ -7,7 +7,6 @@ import com.shop.repository.CartItemRepository;
 import com.shop.repository.CartRepository;
 import com.shop.repository.ProductRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -109,7 +108,6 @@ public class CartService implements ICart {
         item = findItemByProductCode(cart, product.getCode());
         if (null != item) {
             item.setQuantity(item.getQuantity() + quantity);
-            item.setAmount(item.getAmount() + quantity * product.getUnitValue());
             cartItemRepository.save(item);
             return item;
         } else {
@@ -121,9 +119,7 @@ public class CartService implements ICart {
     private CartItem convertProductToCartItem(Product product, int quantity) {
         CartItem cartItem = new CartItem();
         cartItem.setProductCode(product.getCode());
-        cartItem.setProductName(product.getName());
         cartItem.setQuantity(quantity);
-        cartItem.setAmount(product.getUnitValue() * quantity);
         cartItemRepository.save(cartItem);
         return cartItem;
     }
