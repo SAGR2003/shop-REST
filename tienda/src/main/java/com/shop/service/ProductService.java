@@ -4,6 +4,7 @@ import com.shop.model.Product;
 import com.shop.repository.ProductRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+
 import java.sql.Date;
 
 import java.util.List;
@@ -13,6 +14,9 @@ import java.util.List;
 public class ProductService implements IProduct {
     private ProductRepository productRepository;
 
+    private Date todaysDate() {
+        return new Date(System.currentTimeMillis());
+    }
     @Override
     public List<Product> getAllProducts() {
         return productRepository.findAll();
@@ -31,7 +35,7 @@ public class ProductService implements IProduct {
     public String createProduct(Product product) {
         String message = "That code already exists";
         if (!productRepository.existsById(product.getCode())) {
-            product.setDateCreated(new Date(System.currentTimeMillis()));
+            product.setDateCreated(todaysDate());
             productRepository.save(product);
             message = "The product was created successfully";
         }
@@ -39,13 +43,14 @@ public class ProductService implements IProduct {
     }
 
     @Override
-    public String updateProduct(Product productUpdate) {
+    public String updateProduct(int productCode, int quantity) {
+        Product productToUpdate = getProductByCode(productCode);
         String message = "You are trying to update a product that doesn't exist";
-        if (productRepository.existsById(productUpdate.getCode())) {
-            productUpdate.setDateCreated(new Date(System.currentTimeMillis()));
-
-            productRepository.save(productUpdate);
-            message = "The product was updated successfully";
+        if (null != productToUpdate) {
+            productToUpdate.setDateCreated(todaysDate());
+            productToUpdate.setStock(productToUpdate.getStock() + quantity);
+            productRepository.save(productToUpdate);
+            message = "The product stock was updated successfully";
         }
         return message;
     }
@@ -63,10 +68,9 @@ public class ProductService implements IProduct {
     public String createExampleProducts() {
         String message = "You already have some products";
         if (getAllProducts().isEmpty()) {
-            Date dateCreated = new Date(System.currentTimeMillis());
-            productRepository.save(new Product(1, "Gansito", 1000, 3, dateCreated));
-            productRepository.save(new Product(2, "Chocoramo", 2400, 5, dateCreated));
-            productRepository.save(new Product(3, "Ponky", 1000, 10, dateCreated));
+            productRepository.save(new Product(1, "Gansito", 1000, 3, todaysDate()));
+            productRepository.save(new Product(2, "Chocoramo", 2400, 5, todaysDate()));
+            productRepository.save(new Product(3, "Ponky", 1000, 10, todaysDate()));
             message = "The example products were created successfully";
         }
         return message;

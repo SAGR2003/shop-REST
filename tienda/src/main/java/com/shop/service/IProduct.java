@@ -11,7 +11,7 @@ public interface IProduct {
 
     String createProduct(Product product);
 
-    String updateProduct(Product productUpdate);
+    String updateProduct(int productCode, int quantity);
 
     String deleteProductByCode(int code);
 }

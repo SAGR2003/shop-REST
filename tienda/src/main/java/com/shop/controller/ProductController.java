@@ -34,11 +34,10 @@ public class ProductController {
         return productService.createProduct(product);
     }
 
-    @Operation(summary = "Update product by code")
-    @PutMapping(path = "/{code}")
-    private String updateProduct(@PathVariable int code, @RequestBody Product newProduct) {
-        newProduct.setCode(code);
-        return productService.updateProduct(newProduct);
+    @Operation(summary = "Update stock product by code")
+    @PutMapping(path = "/{code}/{quantityToAdd}")
+    private String updateProduct(@PathVariable int code, @PathVariable int quantityToAdd) {
+        return productService.updateProduct(code, quantityToAdd);
     }
 
     @Operation(summary = "Delete product by code")
