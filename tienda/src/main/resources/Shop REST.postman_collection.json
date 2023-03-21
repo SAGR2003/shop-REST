@@ -75,7 +75,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"code\": 4,\r\n    \"name\": \"Gala\",\r\n    \"unitValue\": 1000,\r\n    \"stock\": 2\r\n}\r\n",
+							"raw": "{\r\n    \"code\": 4,\r\n    \"name\": \"Gala\",\r\n    \"unitValue\": 1000,\r\n    \"stock\": 15\r\n}\r\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -97,21 +97,12 @@
 					"response": []
 				},
 				{
-					"name": "Update Product",
+					"name": "Update Product Stock",
 					"request": {
 						"method": "PUT",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"code\": 2,\r\n    \"name\": \"Pinguinito\",\r\n    \"unitValue\": 2000.0,\r\n    \"stock\": 2\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
 						"url": {
-							"raw": "http://localhost:8081/products/2",
+							"raw": "http://localhost:8081/products/3/54",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -119,7 +110,8 @@
 							"port": "8081",
 							"path": [
 								"products",
-								"2"
+								"3",
+								"54"
 							]
 						}
 					},
@@ -131,7 +123,7 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8081/products/1",
+							"raw": "http://localhost:8081/products/4",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -139,7 +131,7 @@
 							"port": "8081",
 							"path": [
 								"products",
-								"1"
+								"4"
 							]
 						}
 					},
@@ -148,94 +140,42 @@
 			]
 		},
 		{
-			"name": "Shopping carts",
+			"name": "Sales",
 			"item": [
 				{
-					"name": "Create shopping cart",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"id\": 1\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:8081/carts",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8081",
-							"path": [
-								"carts"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Shopping cart by id",
+					"name": "Get all sales",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8081/carts/1",
+							"raw": "http://localhost:8081/sales",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "8081",
 							"path": [
-								"carts",
-								"1"
+								"sales"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "Add product to the shopping cart",
+					"name": "Get sales by Document",
 					"request": {
-						"method": "PUT",
+						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8081/carts/1/2/2",
+							"raw": "http://localhost:8081/sales/234",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "8081",
 							"path": [
-								"carts",
-								"1",
-								"2",
-								"2"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Remove from shopping cart",
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:8081/carts/1/2",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8081",
-							"path": [
-								"carts",
-								"1",
-								"2"
+								"sales",
+								"234"
 							]
 						}
 					},
@@ -244,18 +184,27 @@
 				{
 					"name": "Make sale",
 					"request": {
-						"method": "GET",
+						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "[\r\n    {\r\n        \"productCode\": 1,\r\n        \"quantity\": 1\r\n    },\r\n    {\r\n        \"productCode\": 2,\r\n        \"quantity\": 1\r\n    }\r\n]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "http://localhost:8081/carts/1/sell",
+							"raw": "http://localhost:8081/sales/1234/sell",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "8081",
 							"path": [
-								"carts",
-								"1",
+								"sales",
+								"1234",
 								"sell"
 							]
 						}
