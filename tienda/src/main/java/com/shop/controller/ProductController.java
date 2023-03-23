@@ -1,12 +1,13 @@
 package com.shop.controller;
 
+import com.shop.controller.dto.ListResponseDTO;
+import com.shop.controller.dto.ProductResponseDTO;
+import com.shop.controller.dto.ResponseDTO;
 import com.shop.model.Product;
 import com.shop.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/products")
@@ -16,39 +17,37 @@ public class ProductController {
 
     @Operation(summary = "Get all products")
     @GetMapping(path = "")
-    private List<Product> getAllProducts() {
-        List<Product> products = productService.getAllProducts();
-        return products;
+    private ListResponseDTO getAllProducts() {
+        return new ListResponseDTO(productService.getAllProducts());
     }
 
     @Operation(summary = "Get product by code")
     @GetMapping(path = "/{code}")
-    private Product getProduct(@PathVariable int code) {
-        Product product = productService.getProductByCode(code);
-        return product;
+    private ProductResponseDTO getProduct(@PathVariable int code) {
+        return new ProductResponseDTO(productService.getProductByCode(code));
     }
 
     @Operation(summary = "Create product")
     @PostMapping(path = "")
-    private String createProduct(@RequestBody Product product) {
-        return productService.createProduct(product);
+    private ResponseDTO createProduct(@RequestBody Product product) {
+        return new ResponseDTO(productService.createProduct(product));
     }
 
     @Operation(summary = "Update stock product by code")
     @PutMapping(path = "/{code}/{quantityToAdd}")
-    private String updateProduct(@PathVariable int code, @PathVariable int quantityToAdd) {
-        return productService.updateProduct(code, quantityToAdd);
+    private ResponseDTO updateProduct(@PathVariable int code, @PathVariable int quantityToAdd) {
+        return new ResponseDTO(productService.updateProduct(code, quantityToAdd));
     }
 
     @Operation(summary = "Delete product by code")
     @DeleteMapping(path = "/{code}")
-    private String deleteProduct(@PathVariable int code) {
-        return productService.deleteProductByCode(code);
+    private ResponseDTO deleteProduct(@PathVariable int code) {
+        return new ResponseDTO(productService.deleteProductByCode(code));
     }
 
     @Operation(summary = "Create example products")
     @PostMapping(path = "/examples")
-    private String createExampleProducts() {
-        return productService.createExampleProducts();
+    private ResponseDTO createExampleProducts() {
+        return new ResponseDTO(productService.createExampleProducts());
     }
 }
