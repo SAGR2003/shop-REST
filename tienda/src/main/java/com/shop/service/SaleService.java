@@ -38,55 +38,51 @@ public class SaleService implements ISale {
         Sale sale;
         String message = validationsToSell(documentClient, cartItems);
         if (null == message) {
-            sale = createSale(documentClient, sellCartItems(cartItems));
-            saveCartItems(cartItems);
+            sale = createSale(documentClient, cartItems);
             saleRepository.save(sale);
+            saveCartItems(sale, cartItems);
             message = createBill(cartItems, sale.getTotalAmount());
         }
         return message;
+    }
+
+    private Sale createSale(int documentClient, List<CartItem> cartItems) {
+        Sale sale = new Sale();
+        sale.setDocumentClient(documentClient);
+        sale.setDateCreated(todaysDate());
+        sale.setTotalAmount(sellProducts(cartItems, sale));
+        return sale;
+    }
+
+    private void saveCartItems(Sale sale, List<CartItem> cartItems) {
+        for (CartItem item : cartItems) {
+            item.setSale(sale);
+            cartItemRepository.save(item);
+        }
+    }
+
+    private int sellProducts(List<CartItem> cartItems, Sale sale) {
+        int totalAmount = 0;
+        for (CartItem item : cartItems) {
+            Product product = productRepository.getById(item.getProductCode());
+            totalAmount += product.getUnitValue() * item.getQuantity();
+            product.setStock(product.getStock() - item.getQuantity());
+            productRepository.save(product);
+        }
+        return totalAmount;
     }
 
     private String createBill(List<CartItem> cartItems, int total) {
         StringBuilder productsSold = new StringBuilder();
         productsSold.append("I sell ");
         for (CartItem item : cartItems) {
-            productsSold.append(item.getQuantity()).append("x ").append(productRepository.getById(item.getProductCode()).getName()).append(" / ");
+            Product product = productRepository.findById(item.getProductCode()).orElse(null);
+            if (null != product) {
+                productsSold.append(item.getQuantity()).append("x ").append(product.getName()).append(" / ");
+            }
         }
         productsSold.append("Total = ").append(total);
         return productsSold.toString();
-    }
-
-    private int sellCartItems(List<CartItem> cartItems) {
-        int totalAmount = 0;
-        Product product;
-
-        for (CartItem item : cartItems) {
-            product = productRepository.getById(item.getProductCode());
-            updateStock(product, item.getQuantity());
-            totalAmount += item.getQuantity() * product.getUnitValue();
-        }
-        return totalAmount;
-    }
-
-    private Sale createSale(int documentClient, int totalAmount) {
-        Sale sale = new Sale();
-        sale.setDocumentClient(documentClient);
-        sale.setTotalAmount(totalAmount);
-        sale.setDateCreated(todaysDate());
-        return sale;
-    }
-
-    private void saveCartItems(List<CartItem> cartItems) {
-        for (CartItem newCartItem : cartItems) {
-            cartItemRepository.save(newCartItem);
-        }
-    }
-
-    private void updateStock(Product product, int soldQuantity) {
-        int currentStock = product.getStock();
-        int newStock = currentStock - soldQuantity;
-        product.setStock(newStock);
-        productRepository.save(product);
     }
 
     private String validationsToSell(int document, List<CartItem> cartItems) {
@@ -104,7 +100,7 @@ public class SaleService implements ISale {
         return messageError;
     }
 
-    public boolean allProductsExists(List<CartItem> cartItems) {
+    private boolean allProductsExists(List<CartItem> cartItems) {
         boolean theyExist = false;
         for (CartItem item : cartItems) {
             theyExist = productRepository.existsById(item.getProductCode());

@@ -1,11 +1,14 @@
 package com.shop.model;
 
 import lombok.*;
+import org.springframework.stereotype.Component;
+
 import javax.persistence.*;
 
+@Component
 @Entity
 @Data
-@Table (name = "SALE_PRODUCT")
+@Table(name = "SALE_PRODUCT")
 @AllArgsConstructor
 @NoArgsConstructor
 public class CartItem {
@@ -17,4 +20,7 @@ public class CartItem {
     private int productCode;
     @Column(name = "QUANTITY")
     private int quantity;
+    @ManyToOne
+    @JoinColumn(name = "SALE_ID")
+    Sale sale;
 }

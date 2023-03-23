@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
 import java.sql.Date;
-import java.util.List;
 
 @Component
 @Entity
