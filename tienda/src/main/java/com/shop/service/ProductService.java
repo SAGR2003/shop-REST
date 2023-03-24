@@ -2,6 +2,8 @@ package com.shop.service;
 
 import com.shop.model.Product;
 import com.shop.repository.ProductRepository;
+import com.shop.service.exception.ProductAlreadyExistsException;
+import com.shop.service.exception.ProductNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -25,44 +27,44 @@ public class ProductService implements IProduct {
 
     @Override
     public Product getProductByCode(int code) {
-        Product product = new Product();
         if (productRepository.existsById(code)) {
-            product = productRepository.findById(code).get();
+            return productRepository.findById(code).get();
+        } else {
+            throw new ProductNotFoundException(code);
         }
-        return product;
     }
 
     @Override
     public String createProduct(Product product) {
-        String message = "That code already exists";
         if (!productRepository.existsById(product.getCode())) {
             product.setDateCreated(todaysDate());
             productRepository.save(product);
-            message = "The product was created successfully";
+            return "The product was created successfully";
+        } else {
+            throw new ProductAlreadyExistsException(product.getCode());
         }
-        return message;
     }
 
     @Override
     public String updateProduct(int productCode, int quantity) {
         Product productToUpdate = getProductByCode(productCode);
-        String message = "You are trying to update a product that doesn't exist";
         if (null != productToUpdate) {
             productToUpdate.setDateCreated(todaysDate());
             productToUpdate.setStock(productToUpdate.getStock() + quantity);
             productRepository.save(productToUpdate);
-            message = "The product stock was updated successfully";
+            return "The product stock was updated successfully";
+        } else {
+            throw new ProductNotFoundException(productCode);
         }
-        return message;
     }
 
     @Override
     public String deleteProductByCode(int code) {
-        String message = "You are trying to delete a product that doesn't exist";
         if (productRepository.existsById(code)) {
             productRepository.deleteById(code);
-            message = "The product was deleted successfully";
+            return "The product was deleted successfully";
+        } else {
+            throw new ProductNotFoundException(code);
         }
-        return message;
     }
 }
