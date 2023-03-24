@@ -29,26 +29,6 @@
 					"response": []
 				},
 				{
-					"name": "Create example Products",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:8081/products/examples",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8081",
-							"path": [
-								"products",
-								"examples"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "Get product by code",
 					"request": {
 						"method": "GET",

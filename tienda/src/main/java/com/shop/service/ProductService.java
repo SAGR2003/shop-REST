@@ -65,15 +65,4 @@ public class ProductService implements IProduct {
         }
         return message;
     }
-
-    public String createExampleProducts() {
-        String message = "You already have some products";
-        if (getAllProducts().isEmpty()) {
-            productRepository.save(new Product(1, "Gansito", 1000, 3, todaysDate()));
-            productRepository.save(new Product(2, "Chocoramo", 2400, 5, todaysDate()));
-            productRepository.save(new Product(3, "Ponky", 1000, 10, todaysDate()));
-            message = "The example products were created successfully";
-        }
-        return message;
-    }
 }

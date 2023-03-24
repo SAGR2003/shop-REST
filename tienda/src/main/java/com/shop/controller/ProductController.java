@@ -44,10 +44,4 @@ public class ProductController {
     private ResponseDTO deleteProduct(@PathVariable int code) {
         return new ResponseDTO(productService.deleteProductByCode(code));
     }
-
-    @Operation(summary = "Create example products")
-    @PostMapping(path = "/examples")
-    private ResponseDTO createExampleProducts() {
-        return new ResponseDTO(productService.createExampleProducts());
-    }
 }
