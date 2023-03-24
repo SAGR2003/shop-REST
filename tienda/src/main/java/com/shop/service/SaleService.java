@@ -6,6 +6,9 @@ import com.shop.model.Sale;
 import com.shop.repository.CartItemRepository;
 import com.shop.repository.ProductRepository;
 import com.shop.repository.SaleRepository;
+import com.shop.service.exception.DailyTransactionLimitExceededException;
+import com.shop.service.exception.InsufficientStockException;
+import com.shop.service.exception.ProductNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -36,14 +39,11 @@ public class SaleService implements ISale {
     @Override
     public String makeSale(int documentClient, List<CartItem> cartItems) {
         Sale sale;
-        String message = validationsToSell(documentClient, cartItems);
-        if (null == message) {
-            sale = createSale(documentClient, cartItems);
-            saleRepository.save(sale);
-            saveCartItems(sale.getId(), cartItems);
-            message = createBill(sale);
-        }
-        return message;
+        validationsToSell(documentClient, cartItems);
+        sale = createSale(documentClient, cartItems);
+        saleRepository.save(sale);
+        saveCartItems(sale.getId(), cartItems);
+        return createBill(sale);
     }
 
     private Sale createSale(int documentClient, List<CartItem> cartItems) {
@@ -86,37 +86,33 @@ public class SaleService implements ISale {
         return productsSold.toString();
     }
 
-    private String validationsToSell(int document, List<CartItem> cartItems) {
-        String messageError = null;
-        String product = thereIsEnoughStock(cartItems);
+    private void validationsToSell(int document, List<CartItem> cartItems) {
+        validateDailyTransactionLimit(document);
+        validateAllProductsExist(cartItems);
+        validateEnoughStock(cartItems);
+    }
+
+    private void validateDailyTransactionLimit(int document) {
         int todaysTransactionsByDocument = saleRepository.countByDocumentClientAndDateCreated(document, todaysDate());
-
         if (todaysTransactionsByDocument >= 3) {
-            messageError = "You can't make more transactions for today, remember there are 3 per day";
-        } else if (!allProductsExists(cartItems)) {
-            messageError = "One or more of the products you're trying to buy doesn't exist";
-        } else if (null != product) {
-            messageError = "There is not enough stock for the product " + product;
+            throw new DailyTransactionLimitExceededException(document);
         }
-        return messageError;
     }
 
-    private boolean allProductsExists(List<CartItem> cartItems) {
-        boolean theyExist = false;
+    private void validateAllProductsExist(List<CartItem> cartItems) {
         for (CartItem item : cartItems) {
-            theyExist = productRepository.existsById(item.getProductCode());
+            if (!productRepository.existsById(item.getProductCode())) {
+                throw new ProductNotFoundException(item.getProductCode());
+            }
         }
-        return theyExist;
     }
 
-    private String thereIsEnoughStock(List<CartItem> cartItems) {
-        String productOutOfStock = null;
+    private void validateEnoughStock(List<CartItem> cartItems) {
         for (CartItem item : cartItems) {
             Product product = productRepository.getById(item.getProductCode());
             if (product.getStock() < item.getQuantity()) {
-                productOutOfStock = product.getName();
+                throw new InsufficientStockException(product.getName());
             }
         }
-        return productOutOfStock;
     }
 }
