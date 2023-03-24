@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.util.List;
 
 @Component
 @Entity
@@ -25,5 +26,7 @@ public class Sale {
     private int totalAmount;
     @Column(name = "DATE_CREATED")
     private Date dateCreated;
+    @OneToMany(mappedBy = "saleId")
+    private List<CartItem> cartItems;
 }
 

@@ -40,8 +40,8 @@ public class SaleService implements ISale {
         if (null == message) {
             sale = createSale(documentClient, cartItems);
             saleRepository.save(sale);
-            saveCartItems(sale, cartItems);
-            message = createBill(cartItems, sale.getTotalAmount());
+            saveCartItems(sale.getId(), cartItems);
+            message = createBill(sale);
         }
         return message;
     }
@@ -50,20 +50,21 @@ public class SaleService implements ISale {
         Sale sale = new Sale();
         sale.setDocumentClient(documentClient);
         sale.setDateCreated(todaysDate());
-        sale.setTotalAmount(sellProducts(cartItems, sale));
+        sale.setCartItems(cartItems);
+        sale.setTotalAmount(sellProducts(sale));
         return sale;
     }
 
-    private void saveCartItems(Sale sale, List<CartItem> cartItems) {
+    private void saveCartItems(int saleId, List<CartItem> cartItems) {
         for (CartItem item : cartItems) {
-            item.setSale(sale);
+            item.setSaleId(saleId);
             cartItemRepository.save(item);
         }
     }
 
-    private int sellProducts(List<CartItem> cartItems, Sale sale) {
+    private int sellProducts(Sale sale) {
         int totalAmount = 0;
-        for (CartItem item : cartItems) {
+        for (CartItem item : sale.getCartItems()) {
             Product product = productRepository.getById(item.getProductCode());
             totalAmount += product.getUnitValue() * item.getQuantity();
             product.setStock(product.getStock() - item.getQuantity());
@@ -72,16 +73,16 @@ public class SaleService implements ISale {
         return totalAmount;
     }
 
-    private String createBill(List<CartItem> cartItems, int total) {
+    private String createBill(Sale sale) {
         StringBuilder productsSold = new StringBuilder();
         productsSold.append("I sell ");
-        for (CartItem item : cartItems) {
+        for (CartItem item : sale.getCartItems()) {
             Product product = productRepository.findById(item.getProductCode()).orElse(null);
             if (null != product) {
                 productsSold.append(item.getQuantity()).append("x ").append(product.getName()).append(" / ");
             }
         }
-        productsSold.append("Total = ").append(total);
+        productsSold.append("Total = ").append(sale.getTotalAmount());
         return productsSold.toString();
     }
 

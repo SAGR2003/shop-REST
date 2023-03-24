@@ -17,6 +17,7 @@ public class ProductService implements IProduct {
     private Date todaysDate() {
         return new Date(System.currentTimeMillis());
     }
+
     @Override
     public List<Product> getAllProducts() {
         return productRepository.findAll();
