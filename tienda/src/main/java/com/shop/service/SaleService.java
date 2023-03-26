@@ -6,6 +6,7 @@ import com.shop.model.Sale;
 import com.shop.repository.CartItemRepository;
 import com.shop.repository.ProductRepository;
 import com.shop.repository.SaleRepository;
+import com.shop.service.exception.ClientNotFoundException;
 import com.shop.service.exception.DailyTransactionLimitExceededException;
 import com.shop.service.exception.InsufficientStockException;
 import com.shop.service.exception.ProductNotFoundException;
@@ -33,7 +34,11 @@ public class SaleService implements ISale {
 
     @Override
     public List<Sale> getSalesByDocument(int document) {
-        return saleRepository.findAllByDocumentClient(document);
+        if(!saleRepository.findAllByDocumentClient(document).isEmpty()) {
+            return saleRepository.findAllByDocumentClient(document);
+        }else {
+            throw new ClientNotFoundException(document);
+        }
     }
 
     @Override
