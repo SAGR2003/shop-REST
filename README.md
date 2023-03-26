@@ -13,7 +13,7 @@
 <h3>Configuraciones y/o aclaraciones necesarias:</h3>
 • Se necesita java 19 <br>
 • Usa por defecto el puerto 8081 <br>
-• [Archivo postman .json] (https://github.com/SAGR2003/shop-REST/tree/master/tienda/src/main/java/com/shop/postman)
+• [Archivo postman .json] (https://github.com/SAGR2003/shop-REST/blob/master/src/main/resources/Shop%20REST.postman_collection.json)
 
 • [Acceder a la documentación Swagger] ([http://localhost:8081/swagger-ui/](http://localhost:8081/swagger-ui/))
 
