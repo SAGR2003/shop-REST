@@ -12,6 +12,4 @@ public interface IProduct {
     String createProduct(Product product);
 
     String updateProduct(int productCode, int quantity);
-
-    String deleteProductByCode(int code);
 }

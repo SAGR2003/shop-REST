@@ -38,10 +38,4 @@ public class ProductController {
     private ResponseDTO updateProduct(@PathVariable int code, @PathVariable int quantityToAdd) {
         return new ResponseDTO(productService.updateProduct(code, quantityToAdd));
     }
-
-    @Operation(summary = "Delete product by code")
-    @DeleteMapping(path = "/{code}")
-    private ResponseDTO deleteProduct(@PathVariable int code) {
-        return new ResponseDTO(productService.deleteProductByCode(code));
-    }
 }

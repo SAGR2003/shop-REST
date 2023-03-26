@@ -57,14 +57,4 @@ public class ProductService implements IProduct {
             throw new ProductNotFoundException(productCode);
         }
     }
-
-    @Override
-    public String deleteProductByCode(int code) {
-        if (productRepository.existsById(code)) {
-            productRepository.deleteById(code);
-            return "The product was deleted successfully";
-        } else {
-            throw new ProductNotFoundException(code);
-        }
-    }
 }
