@@ -96,26 +96,6 @@
 						}
 					},
 					"response": []
-				},
-				{
-					"name": "Delete Product",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:8081/products/4",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8081",
-							"path": [
-								"products",
-								"4"
-							]
-						}
-					},
-					"response": []
 				}
 			]
 		},
