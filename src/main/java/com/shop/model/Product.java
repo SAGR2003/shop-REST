@@ -2,6 +2,7 @@ package com.shop.model;
 
 import javax.persistence.*;
 import java.sql.Date;
+
 import lombok.*;
 
 @Entity
@@ -16,7 +17,7 @@ public class Product {
     @Column(name = "NAME")
     private String name;
     @Column(name = "VALUE")
-    private double unitValue;
+    private int unitValue;
     @Column(name = "QUANTITY")
     private int stock;
     @Column(name = "DATE_CREATED")

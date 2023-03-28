@@ -8,7 +8,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
-
 import java.util.List;
 
 @Service
@@ -28,7 +27,7 @@ public class ProductService implements IProduct {
     @Override
     public Product getProductByCode(int code) {
         if (productRepository.existsById(code)) {
-            return productRepository.findById(code).get();
+            return productRepository.getById(code);
         } else {
             throw new ProductNotFoundException(code);
         }
@@ -48,13 +47,8 @@ public class ProductService implements IProduct {
     @Override
     public String updateProduct(int productCode, int quantity) {
         Product productToUpdate = getProductByCode(productCode);
-        if (null != productToUpdate) {
-            productToUpdate.setDateCreated(todaysDate());
-            productToUpdate.setStock(productToUpdate.getStock() + quantity);
-            productRepository.save(productToUpdate);
-            return "The product stock was updated successfully";
-        } else {
-            throw new ProductNotFoundException(productCode);
-        }
+        productToUpdate.setStock(productToUpdate.getStock() + quantity);
+        productRepository.save(productToUpdate);
+        return "The product stock was updated successfully";
     }
 }
