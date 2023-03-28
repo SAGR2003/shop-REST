@@ -4,7 +4,7 @@ import com.shop.controller.dto.ListResponseDTO;
 import com.shop.controller.dto.ProductResponseDTO;
 import com.shop.controller.dto.ResponseDTO;
 import com.shop.model.Product;
-import com.shop.service.ProductService;
+import com.shop.service.IProduct;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/products")
 @AllArgsConstructor
 public class ProductController {
-    private ProductService productService;
+    private IProduct productService;
 
     @Operation(summary = "Get all products")
     @GetMapping(path = "")

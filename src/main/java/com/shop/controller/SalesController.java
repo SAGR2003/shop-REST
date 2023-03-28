@@ -3,7 +3,7 @@ package com.shop.controller;
 import com.shop.controller.dto.ListResponseDTO;
 import com.shop.controller.dto.ResponseDTO;
 import com.shop.model.CartItem;
-import com.shop.service.SaleService;
+import com.shop.service.ISale;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +14,7 @@ import java.util.List;
 @RequestMapping("/sales")
 @AllArgsConstructor
 public class SalesController {
-    private SaleService saleService;
+    private ISale saleService;
 
     @Operation(summary = "Get all Sales")
     @GetMapping(path = "")
