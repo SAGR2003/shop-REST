@@ -34,9 +34,9 @@ public class SaleService implements ISale {
 
     @Override
     public List<Sale> getSalesByDocument(int document) {
-        if(!saleRepository.findAllByDocumentClient(document).isEmpty()) {
+        if (!saleRepository.findAllByDocumentClient(document).isEmpty()) {
             return saleRepository.findAllByDocumentClient(document);
-        }else {
+        } else {
             throw new ClientNotFoundException(document);
         }
     }
@@ -82,10 +82,8 @@ public class SaleService implements ISale {
         StringBuilder productsSold = new StringBuilder();
         productsSold.append("I sell ");
         for (CartItem item : sale.getCartItems()) {
-            Product product = productRepository.findById(item.getProductCode()).orElse(null);
-            if (null != product) {
-                productsSold.append(item.getQuantity()).append("x ").append(product.getName()).append(" / ");
-            }
+            Product product = productRepository.getById(item.getProductCode());
+            productsSold.append(item.getQuantity()).append("x ").append(product.getName()).append(" / ");
         }
         productsSold.append("Total = ").append(sale.getTotalAmount());
         return productsSold.toString();
