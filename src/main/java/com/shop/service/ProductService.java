@@ -28,7 +28,7 @@ public class ProductService implements IProduct {
     @Override
     public Product getProductByCode(int code) {
         if (productRepository.existsById(code)) {
-            return productRepository.findById(code).get();
+            return productRepository.getById(code);
         } else {
             throw new ProductNotFoundException(code);
         }
