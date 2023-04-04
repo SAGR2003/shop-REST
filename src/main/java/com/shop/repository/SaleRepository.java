@@ -11,6 +11,4 @@ import java.util.List;
 public interface SaleRepository extends JpaRepository<Sale, Integer> {
     List<Sale> findAllByDocumentClient(int documentClient);
     Integer countByDocumentClientAndDateCreated(int documentClient, Date dateCreated);
-    Integer countByDocumentClient(int documentClient);
-
 }

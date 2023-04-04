@@ -1,6 +1,8 @@
 package com.shop.service;
 
 import com.shop.model.CartItem;
+import com.shop.model.Product;
+import com.shop.model.Sale;
 import com.shop.repository.CartItemRepository;
 import com.shop.repository.ProductRepository;
 import com.shop.repository.SaleRepository;
@@ -30,6 +32,16 @@ class SaleServiceTest {
     private CartItemRepository cartItemRepository;
 
     @Test
+    void When_getAllSales_Then_return_SalesList(){
+        List<Sale> testSales = Arrays.asList(new Sale(1,1019283,1291,new Date(System.currentTimeMillis()),Arrays.asList(new CartItem(1,2,3,1))));
+        Mockito.when(saleRepository.findAll()).thenReturn(testSales);
+
+        List<Sale> actualSales =saleService.getAllSales();
+
+        Assertions.assertEquals(testSales,actualSales);
+        Mockito.verify(saleRepository).findAll();
+    }
+    @Test
     void Given_document_exceeding_daily_limit_When_makeSale_Then_throw_DailyTransactionLimitExceededException() {
         int documentClient = 123456;
         List<CartItem> cartItems = Arrays.asList(new CartItem(1, 1, 2, null), new CartItem(2, 2, 1, null));
@@ -47,5 +59,22 @@ class SaleServiceTest {
 
         Assertions.assertThrows(ProductNotFoundException.class, () -> saleService.makeSale(documentClient, cartItems));
         Mockito.verify(productRepository).existsById(1);
+    }
+    @Test
+    void Given_valid_documentClient_and_cartItems_When_makeSale_Then_createBill(){
+        Product testProduct  = new Product(1,"Gelatina",1299,100,new Date(System.currentTimeMillis()));
+        CartItem testItem1=new CartItem(1, testProduct.getCode(),3,null);
+        Sale sale=new Sale(1,1019283,1291,new Date(System.currentTimeMillis()), Arrays.asList(testItem1));
+
+        Mockito.when(productRepository.existsById(testProduct.getCode())).thenReturn(true);
+        Mockito.when(productRepository.getById(testProduct.getCode())).thenReturn(testProduct);
+
+        String actualBill = saleService.makeSale(sale.getDocumentClient(),sale.getCartItems());
+        Assertions.assertEquals(actualBill,"I sell 3x Gelatina / Total = 3897");
+
+
+        Mockito.verify(productRepository).save(testProduct);
+        Mockito.verify(saleRepository).save(Mockito.any(Sale.class));
+        Mockito.verify(cartItemRepository).save(testItem1);
     }
 }
