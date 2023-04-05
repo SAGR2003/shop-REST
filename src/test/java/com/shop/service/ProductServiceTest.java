@@ -45,7 +45,7 @@ class ProductServiceTest {
 
         Assertions.assertEquals(testProduct,result);
         Mockito.verify(productRepository).existsById(testProduct.getCode());
-        Mockito.verify(productRepository).findById(testProduct.getCode());
+        Mockito.verify(productRepository).getById(testProduct.getCode());
     }
     @Test
     public void Given_Product_not_existsByCode_When_getProductByCode_Then_Product_not_found(){
@@ -55,7 +55,7 @@ class ProductServiceTest {
         Assertions.assertThrows(ProductNotFoundException.class, () -> {
             productService.getProductByCode(testProduct.getCode());
         });
-        Mockito.verify(productRepository.existsById(testProduct.getCode()));
+        Mockito.verify(productRepository).existsById(testProduct.getCode());
     }
 
 
@@ -67,7 +67,7 @@ class ProductServiceTest {
         String message = productService.createProduct(testProduct);
 
         Assertions.assertEquals("The product was created successfully", message);
-        Mockito.verify(productRepository.save(testProduct));
+        Mockito.verify(productRepository).save(testProduct);
         Mockito.verify(productRepository).existsById(testProduct.getCode());
     }
 
