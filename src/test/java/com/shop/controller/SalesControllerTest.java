@@ -34,12 +34,9 @@ class SalesControllerTest extends AbstractTest {
     private ProductRepository productRepository;
 
     @Test
-    void testGetAllTransactions() {
+    void When_getAllTransactions_Then_return_all_sales() {
         List<CartItem> cartItems = createAndSaveCartItems();
-
-        System.out.println(cartItems);
         Sale sale = new Sale(1, 123, 555, new Date(System.currentTimeMillis()), cartItems);
-        System.out.println(sale);
         saleRepository.save(sale);
 
         ResponseEntity<ListResponseDTO> response = restTemplate.getForEntity("/sales", ListResponseDTO.class);
@@ -72,7 +69,6 @@ class SalesControllerTest extends AbstractTest {
         cartItemRepository.save(testItem1);
         saleRepository.save(sale);
         ResponseEntity<ResponseDTO> response = restTemplate.postForEntity(PATH_SALE + "/1019283/sell", cartItems, ResponseDTO.class);
-        System.out.println(response.getBody().getResponse());
         assertEquals("I sell 3x Gelatina / Total = 3897", response.getBody().getResponse());
     }
 
