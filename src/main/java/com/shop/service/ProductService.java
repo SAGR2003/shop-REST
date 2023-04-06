@@ -48,13 +48,8 @@ public class ProductService implements IProduct {
     @Override
     public String updateProduct(int productCode, int quantity) {
         Product productToUpdate = getProductByCode(productCode);
-        if (null != productToUpdate) {
-            productToUpdate.setDateCreated(todaysDate());
-            productToUpdate.setStock(productToUpdate.getStock() + quantity);
-            productRepository.save(productToUpdate);
-            return "The product stock was updated successfully";
-        } else {
-            throw new ProductNotFoundException(productCode);
-        }
+        productToUpdate.setStock(productToUpdate.getStock() + quantity);
+        productRepository.save(productToUpdate);
+        return "The product stock was updated successfully";
     }
 }
