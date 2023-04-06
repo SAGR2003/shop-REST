@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import com.shop.service.ProductService;
 
 import java.sql.Date;
 import java.util.Arrays;
@@ -25,6 +26,8 @@ class ProductControllerTest extends AbstractTest {
     private TestRestTemplate restTemplate;
     @Autowired
     private ProductRepository productRepository;
+    @Autowired
+    private ProductService productService;
 
 
     @Test
@@ -60,5 +63,18 @@ class ProductControllerTest extends AbstractTest {
         productRepository.save(product1);
         productRepository.save(product2);
         return Arrays.asList(product1, product2);
+    }
+
+    @Test
+    void Given_product_When_createProduct_Then_product_is_created_successfully() {
+        productRepository.deleteAll();
+        Product product = new Product(17, "Gansito", 1000, 3, new Date(System.currentTimeMillis()));
+
+        ResponseEntity<ResponseDTO> response = restTemplate.postForEntity(PATH_PRODUCT, product, ResponseDTO.class);
+        assertEquals("The product was created successfully", response.getBody().getResponse());
+
+        List<Product> products = productService.getAllProducts();
+        assertEquals(1, products.size());
+        assertEquals(product, products.get(0));
     }
 }
