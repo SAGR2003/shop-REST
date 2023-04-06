@@ -19,6 +19,8 @@ import java.sql.Date;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 class SalesControllerTest extends AbstractTest {
     private static final String PATH_SALE = "/sales";
 
@@ -32,6 +34,21 @@ class SalesControllerTest extends AbstractTest {
     private ProductRepository productRepository;
 
     @Test
+    void testGetAllTransactions() {
+        List<CartItem> cartItems = createAndSaveCartItems();
+
+        System.out.println(cartItems);
+        Sale sale = new Sale(1, 123, 555, new Date(System.currentTimeMillis()), cartItems);
+        System.out.println(sale);
+        saleRepository.save(sale);
+
+        ResponseEntity<ListResponseDTO> response = restTemplate.getForEntity("/sales", ListResponseDTO.class);
+
+        assertEquals(1, response.getBody().getListResponse().size());
+        assertEquals("{id=1, documentClient=123, totalAmount=555, dateCreated=" + sale.getDateCreated() + ", cartItems=[{itemId=1, productCode=1, quantity=2, saleId=1}, {itemId=2, productCode=2, quantity=3, saleId=1}]}", String.valueOf(response.getBody().getListResponse().get(0)));
+    }
+
+    @Test
     void Given_valid_document_When_getTransactionsByDocument_Then_return_ListOfSalesByDocument() {
         int document = 123;
         List<CartItem> cartItems = createAndSaveCartItems();
@@ -42,7 +59,7 @@ class SalesControllerTest extends AbstractTest {
 
         List<Sale> sales = response.getBody().getListResponse();
         Assertions.assertNotNull(sales);
-        Assertions.assertEquals("{id=1, documentClient=123, totalAmount=1111111, dateCreated=" + sale1.getDateCreated() + ", cartItems=[{itemId=1, productCode=1, quantity=2, saleId=1}, {itemId=2, productCode=2, quantity=3, saleId=1}]}", String.valueOf(response.getBody().getListResponse().get(0)));
+        assertEquals("{id=1, documentClient=123, totalAmount=1111111, dateCreated=" + sale1.getDateCreated() + ", cartItems=[{itemId=1, productCode=1, quantity=2, saleId=1}, {itemId=2, productCode=2, quantity=3, saleId=1}]}", String.valueOf(response.getBody().getListResponse().get(0)));
     }
 
     @Test
@@ -56,7 +73,7 @@ class SalesControllerTest extends AbstractTest {
         saleRepository.save(sale);
         ResponseEntity<ResponseDTO> response = restTemplate.postForEntity(PATH_SALE + "/1019283/sell", cartItems, ResponseDTO.class);
         System.out.println(response.getBody().getResponse());
-        Assertions.assertEquals("I sell 3x Gelatina / Total = 3897", response.getBody().getResponse());
+        assertEquals("I sell 3x Gelatina / Total = 3897", response.getBody().getResponse());
     }
 
     private List<CartItem> createAndSaveCartItems() {
