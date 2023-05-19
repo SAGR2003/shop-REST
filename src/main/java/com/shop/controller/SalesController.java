@@ -1,11 +1,14 @@
 package com.shop.controller;
 
+import com.google.gson.Gson;
 import com.shop.controller.dto.ListResponseDTO;
 import com.shop.controller.dto.ResponseDTO;
+import com.shop.model.AsyncSale;
 import com.shop.model.CartItem;
 import com.shop.service.ISale;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,6 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 public class SalesController {
     private ISale saleService;
+    private Gson gson;
 
     @Operation(summary = "Get all Sales")
     @GetMapping(path = "")
@@ -33,4 +37,12 @@ public class SalesController {
     private ResponseDTO makeSell(@PathVariable int documentClient, @RequestBody List<CartItem> cartItems) {
         return new ResponseDTO(saleService.makeSale(documentClient, cartItems));
     }
+
+    @Operation(summary = "Sell products in an asynchronous way")
+    @RabbitListener(queues = "asynchronousSaleQueue")
+    private void makeSellAsynchronous(String shoppingCart) {
+        AsyncSale asyncSale = gson.fromJson(shoppingCart, AsyncSale.class);
+        saleService.makeSaleAsync(asyncSale);
+    }
+
 }

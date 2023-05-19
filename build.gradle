@@ -51,10 +51,13 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.jetbrains:annotations:23.0.0'
     compileOnly 'org.projectlombok:lombok'
+    implementation 'org.springframework.boot:spring-boot-starter-amqp'
+    implementation 'io.springfox:springfox-boot-starter:3.0.0'
+    implementation("org.springframework.boot:spring-boot-starter-validation")
+    implementation group: 'com.google.code.gson', name: 'gson', version: '2.10.1'
     runtimeOnly 'com.h2database:h2'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    implementation 'io.springfox:springfox-boot-starter:3.0.0'
     testImplementation group: 'com.h2database', name: 'h2', version: '2.1.214'
 }
 sonarqube {
