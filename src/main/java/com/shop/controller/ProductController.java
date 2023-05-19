@@ -24,7 +24,14 @@ public class ProductController {
     @Operation(summary = "Get product by code")
     @GetMapping(path = "/{code}")
     private ProductResponseDTO getProduct(@PathVariable int code) {
-        return new ProductResponseDTO(productService.getProductByCode(code));
+        Product productByCode = productService.getProductByCode(code);
+        return new ProductResponseDTO(
+                productByCode.getCode(),
+                productByCode.getName(),
+                productByCode.getUnitValue(),
+                productByCode.getStock(),
+                productByCode.getDateCreated()
+        );
     }
 
     @Operation(summary = "Create product")

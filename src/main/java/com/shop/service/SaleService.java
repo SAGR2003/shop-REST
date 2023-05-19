@@ -109,7 +109,7 @@ public class SaleService implements ISale {
 
     private void validateDailyTransactionLimit(int document) {
         int todaysTransactionsByDocument = saleRepository.countByDocumentClientAndDateCreated(document, todaysDate());
-        if (todaysTransactionsByDocument >= 93) {
+        if (todaysTransactionsByDocument >= 3) {
             throw new DailyTransactionLimitExceededException(document);
         }
     }
