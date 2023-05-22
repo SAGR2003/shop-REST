@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "6de00c9f-37e3-4538-bc6e-0c8f6f6bc9ab",
+		"_postman_id": "bf13d24f-bc63-447b-a974-e331852227b1",
 		"name": "Shop REST",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "25958909"
@@ -96,6 +96,26 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Delete Product",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/products/4",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"products",
+								"4"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -166,6 +186,36 @@
 								"sales",
 								"1234",
 								"sell"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Make sale async",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "[\r\n    {\r\n        \"productCode\": 3,\r\n        \"quantity\": 1\r\n    },\r\n    {\r\n        \"productCode\": 1,\r\n        \"quantity\": 1\r\n    }\r\n]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9090/sales/1/cll3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9090",
+							"path": [
+								"sales",
+								"1",
+								"cll3"
 							]
 						}
 					},
