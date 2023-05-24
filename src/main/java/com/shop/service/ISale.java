@@ -11,7 +11,6 @@ public interface ISale {
 
     List<Sale> getSalesByDocument(int document);
 
-    String makeSale(int documentClient, List<CartItem> cartItems);
+    String makeSale(int documentClient, List<CartItem> cartItems, String address);
 
-    String makeSaleAsync(AsyncSale shoppingCart);
 }

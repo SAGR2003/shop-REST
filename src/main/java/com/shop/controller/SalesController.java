@@ -13,7 +13,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
@@ -42,7 +41,7 @@ public class SalesController {
     @ApiResponses(value = {@ApiResponse(code = 200, message = "Request Successfull"), @ApiResponse(code = 500, message = "Unexpected error. There is not stock enough and the code does not exists"), @ApiResponse(code = 400, message = "Bad request. Invalid request syntax")})
     @PostMapping(path = "/{documentClient}/sell")
     private ResponseDTO makeSell(@PathVariable int documentClient, @RequestBody List<CartItem> cartItems) {
-        return new ResponseDTO(saleService.makeSale(documentClient, cartItems));
+        return new ResponseDTO(saleService.makeSale(documentClient, cartItems, null));
     }
 
     @Operation(summary = "Sell products in an asynchronous way")
@@ -50,7 +49,7 @@ public class SalesController {
     @RabbitListener(queues = "asynchronousSaleQueue")
     private void makeSellAsynchronous(String shoppingCart) {
         AsyncSale asyncSale = gson.fromJson(shoppingCart, AsyncSale.class);
-        saleService.makeSaleAsync(asyncSale);
+        saleService.makeSale(asyncSale.getDocumentClient(), asyncSale.getCartItems(), asyncSale.getAddress());
     }
 
 }

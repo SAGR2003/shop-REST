@@ -3,10 +3,6 @@ package com.shop.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.stereotype.Component;
-
-import javax.persistence.*;
-import java.sql.Date;
 import java.util.List;
 
 @Data
@@ -15,6 +11,6 @@ import java.util.List;
 public class AsyncSale {
     private int documentClient;
     private List<CartItem> cartItems;
-    private String destinationAddress;
+    private String address;
 }
 

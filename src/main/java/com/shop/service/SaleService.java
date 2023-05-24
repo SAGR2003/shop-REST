@@ -1,6 +1,4 @@
 package com.shop.service;
-
-import com.shop.model.AsyncSale;
 import com.shop.model.CartItem;
 import com.shop.model.Product;
 import com.shop.model.Sale;
@@ -12,10 +10,8 @@ import com.shop.service.exception.DailyTransactionLimitExceededException;
 import com.shop.service.exception.InsufficientStockException;
 import com.shop.service.exception.ProductNotFoundException;
 import lombok.AllArgsConstructor;
-import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.sql.Date;
 import java.util.List;
 
@@ -46,28 +42,21 @@ public class SaleService implements ISale {
     }
 
     @Override
-    public String makeSale(int documentClient, List<CartItem> cartItems) {
+    public String makeSale(int documentClient, List<CartItem> cartItems, String address) {
         Sale sale;
         validationsToSell(documentClient, cartItems);
-        sale = createSale(documentClient, cartItems);
+        sale = createSale(documentClient, cartItems, address);
         saleRepository.save(sale);
         saveCartItems(sale.getId(), cartItems);
         return createBill(sale);
     }
 
-    @Override
-    public String makeSaleAsync(AsyncSale shoppingCart) {
-        String bill = makeSale(shoppingCart.getDocumentClient(), shoppingCart.getCartItems());
-        String response = "The bill is: " + bill + " for the client with document: " + shoppingCart.getDocumentClient() + ", sending order to address: " + shoppingCart.getDestinationAddress();
-        System.out.println(response);
-        return response;
-    }
-
-    private Sale createSale(int documentClient, List<CartItem> cartItems) {
+    private Sale createSale(int documentClient, List<CartItem> cartItems, String address) {
         Sale sale = new Sale();
         sale.setDocumentClient(documentClient);
         sale.setDateCreated(todaysDate());
         sale.setCartItems(cartItems);
+        sale.setAddress(address);
         sale.setTotalAmount(sellProducts(sale));
         return sale;
     }

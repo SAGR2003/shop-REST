@@ -26,6 +26,8 @@ public class Sale {
     private int totalAmount;
     @Column(name = "DATE_CREATED")
     private Date dateCreated;
+    @Column(name = "ADDRESS")
+    private String address;
     @OneToMany(mappedBy = "saleId")
     private List<CartItem> cartItems;
 }

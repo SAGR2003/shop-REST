@@ -36,7 +36,7 @@ class SaleServiceTest {
 
     @Test
     void When_getAllSales_Then_return_SalesList() {
-        List<Sale> testSales = Arrays.asList(new Sale(1, 1019283, 1291, new Date(System.currentTimeMillis()), Arrays.asList(new CartItem(1, 2, 3, 1))));
+        List<Sale> testSales = List.of(new Sale(1, 1019283, 1291, new Date(System.currentTimeMillis()), "Cll123", List.of(new CartItem(1, 2, 3, 1))));
         Mockito.when(saleRepository.findAll()).thenReturn(testSales);
 
         List<Sale> actualSales = saleService.getAllSales();
@@ -51,7 +51,7 @@ class SaleServiceTest {
         List<CartItem> cartItems = Arrays.asList(new CartItem(1, 1, 2, null), new CartItem(2, 2, 1, null));
         Mockito.when(saleRepository.countByDocumentClientAndDateCreated(Mockito.eq(documentClient), Mockito.any(Date.class))).thenReturn(3);
 
-        Assertions.assertThrows(DailyTransactionLimitExceededException.class, () -> saleService.makeSale(documentClient, cartItems));
+        Assertions.assertThrows(DailyTransactionLimitExceededException.class, () -> saleService.makeSale(documentClient, cartItems, "Cll123"));
         Mockito.verify(saleRepository).countByDocumentClientAndDateCreated(Mockito.eq(documentClient), Mockito.any(Date.class));
     }
 
@@ -61,7 +61,7 @@ class SaleServiceTest {
         List<CartItem> cartItems = List.of(new CartItem(1, 1, 2, null));
         Mockito.when(productRepository.existsById(1)).thenReturn(false);
 
-        Assertions.assertThrows(ProductNotFoundException.class, () -> saleService.makeSale(documentClient, cartItems));
+        Assertions.assertThrows(ProductNotFoundException.class, () -> saleService.makeSale(documentClient, cartItems, "Cll123"));
         Mockito.verify(productRepository).existsById(1);
     }
 
@@ -69,12 +69,12 @@ class SaleServiceTest {
     void Given_valid_documentClient_and_cartItems_When_makeSale_Then_createBill() {
         Product testProduct = new Product(1, "Gelatina", 1299, 100, new Date(System.currentTimeMillis()));
         CartItem testItem1 = new CartItem(1, testProduct.getCode(), 3, null);
-        Sale sale = new Sale(1, 1019283, 1291, new Date(System.currentTimeMillis()), Arrays.asList(testItem1));
+        Sale sale = new Sale(1, 1019283, 1291, new Date(System.currentTimeMillis()), "Cll123", List.of(testItem1));
 
         Mockito.when(productRepository.existsById(testProduct.getCode())).thenReturn(true);
         Mockito.when(productRepository.getById(testProduct.getCode())).thenReturn(testProduct);
 
-        String actualBill = saleService.makeSale(sale.getDocumentClient(), sale.getCartItems());
+        String actualBill = saleService.makeSale(sale.getDocumentClient(), sale.getCartItems(), sale.getAddress());
         Assertions.assertEquals(actualBill, "I sell 3x Gelatina / Total = 3897");
 
 
@@ -92,7 +92,7 @@ class SaleServiceTest {
         Mockito.when(productRepository.existsById(1)).thenReturn(true);
         Mockito.when(productRepository.getById(1)).thenReturn(product);
 
-        Assertions.assertThrows(InsufficientStockException.class, () -> saleService.makeSale(documentClient, cartItems));
+        Assertions.assertThrows(InsufficientStockException.class, () -> saleService.makeSale(documentClient, cartItems, "Cll123"));
         Mockito.verify(productRepository).existsById(1);
         Mockito.verify(productRepository).getById(1);
     }
@@ -100,7 +100,7 @@ class SaleServiceTest {
     @Test
     void Given_valid_document_When_getSalesByDocument_Then_return_List_of_sales_by_document() {
         int validDocument = 555;
-        List<Sale> expectedSales = Arrays.asList(new Sale(1, validDocument, 1000, new Date(System.currentTimeMillis()), List.of(new CartItem())), new Sale(2, validDocument, 10000, new Date(System.currentTimeMillis()), List.of(new CartItem())));
+        List<Sale> expectedSales = Arrays.asList(new Sale(1, validDocument, 1000, new Date(System.currentTimeMillis()), "Cll123", List.of(new CartItem())), new Sale(2, validDocument, 10000, new Date(System.currentTimeMillis()), "Cll123", List.of(new CartItem())));
         Mockito.when(saleRepository.findAllByDocumentClient(validDocument)).thenReturn(expectedSales);
 
         List<Sale> actualSales = saleService.getSalesByDocument(validDocument);

@@ -36,34 +36,34 @@ class SalesControllerTest extends AbstractTest {
     @Test
     void When_getAllTransactions_Then_return_all_sales() {
         List<CartItem> cartItems = createAndSaveCartItems();
-        Sale sale = new Sale(1, 123, 555, new Date(System.currentTimeMillis()), cartItems);
+        Sale sale = new Sale(1, 123, 555, new Date(System.currentTimeMillis()), "Cll123", cartItems);
         saleRepository.save(sale);
 
         ResponseEntity<ListResponseDTO> response = restTemplate.getForEntity("/sales", ListResponseDTO.class);
 
         assertEquals(1, response.getBody().getListResponse().size());
-        assertEquals("{id=1, documentClient=123, totalAmount=555, dateCreated=" + sale.getDateCreated() + ", cartItems=[{itemId=1, productCode=1, quantity=2, saleId=1}, {itemId=2, productCode=2, quantity=3, saleId=1}]}", String.valueOf(response.getBody().getListResponse().get(0)));
+        assertEquals("{id=1, documentClient=123, totalAmount=555, dateCreated=" + sale.getDateCreated() + ", address=Cll123, cartItems=[{itemId=1, productCode=1, quantity=2, saleId=1}, {itemId=2, productCode=2, quantity=3, saleId=1}]}", String.valueOf(response.getBody().getListResponse().get(0)));
     }
 
     @Test
     void Given_valid_document_When_getTransactionsByDocument_Then_return_ListOfSalesByDocument() {
         int document = 123;
         List<CartItem> cartItems = createAndSaveCartItems();
-        Sale sale1 = new Sale(1, document, 1111111, new Date(System.currentTimeMillis()), cartItems);
+        Sale sale1 = new Sale(1, document, 1111111, new Date(System.currentTimeMillis()), "Cll123", cartItems);
         saleRepository.save(sale1);
 
         ResponseEntity<ListResponseDTO> response = restTemplate.getForEntity(PATH_SALE + "/{documentClient}", ListResponseDTO.class, document);
 
         List<Sale> sales = response.getBody().getListResponse();
         Assertions.assertNotNull(sales);
-        assertEquals("{id=1, documentClient=123, totalAmount=1111111, dateCreated=" + sale1.getDateCreated() + ", cartItems=[{itemId=1, productCode=1, quantity=2, saleId=1}, {itemId=2, productCode=2, quantity=3, saleId=1}]}", String.valueOf(response.getBody().getListResponse().get(0)));
+        assertEquals("{id=1, documentClient=123, totalAmount=1111111, dateCreated=" + sale1.getDateCreated() + ", address=Cll123, cartItems=[{itemId=1, productCode=1, quantity=2, saleId=1}, {itemId=2, productCode=2, quantity=3, saleId=1}]}", String.valueOf(response.getBody().getListResponse().get(0)));
     }
 
     @Test
     void Given_documentClient_and_cartItems_When_makeSale_Then_return_ResponseDTO() {
         Product testProduct = new Product(1, "Gelatina", 1299, 100, new Date(System.currentTimeMillis()));
         CartItem testItem1 = new CartItem(1, testProduct.getCode(), 3, 80);
-        Sale sale = new Sale(80, 1019283, 1291, new Date(System.currentTimeMillis()), Arrays.asList(testItem1));
+        Sale sale = new Sale(80, 1019283, 1291, new Date(System.currentTimeMillis()), "Cll123", Arrays.asList(testItem1));
         List<CartItem> cartItems = Arrays.asList(testItem1);
         productRepository.save(testProduct);
         cartItemRepository.save(testItem1);
