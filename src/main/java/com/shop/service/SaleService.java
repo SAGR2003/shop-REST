@@ -26,7 +26,7 @@ public class SaleService implements ISale {
     private SaleRepository saleRepository;
     private ProductRepository productRepository;
     private CartItemRepository cartItemRepository;
-    private Stack<SaleMemento> salesHistory;
+    private final Stack<SaleMemento> salesHistory = new Stack<>();
 
     private Date todaysDate() {
         return new Date(System.currentTimeMillis());
@@ -149,6 +149,4 @@ public class SaleService implements ISale {
         }
         return "There are no sales to undo";
     }
-
-
 }
