@@ -2,6 +2,7 @@ package com.shop.controller;
 
 import com.shop.AbstractTest;
 import com.shop.controller.dto.ListResponseDTO;
+import com.shop.controller.dto.ProductResponseDTO;
 import com.shop.controller.dto.ResponseDTO;
 import com.shop.model.Product;
 import com.shop.repository.ProductRepository;
@@ -39,6 +40,24 @@ class ProductControllerTest extends AbstractTest {
         assertEquals(2, response.getBody().getListResponse().size());
         assertEquals("{code=1, name=Tampico, unitValue=1100, stock=5, dateCreated=" + products.get(0).getDateCreated() + "}", String.valueOf(response.getBody().getListResponse().get(0)));
         assertEquals("{code=2, name=Gansito, unitValue=1000, stock=10, dateCreated=" + products.get(1).getDateCreated() + "}", String.valueOf(response.getBody().getListResponse().get(1)));
+    }
+
+    @Test
+    void Given_existing_productCode_When_getProduct_Then_return_ProductResponseDTO() {
+        int productCode = 1;
+        String productName = "Tampico";
+        int unitValue = 1100;
+        int stock = 5;
+
+        Product product = new Product(productCode, productName, unitValue, stock, new Date(System.currentTimeMillis()));
+        productRepository.save(product);
+
+        ResponseEntity<ProductResponseDTO> response = restTemplate.getForEntity(PATH_PRODUCT + "/{code}", ProductResponseDTO.class, productCode);
+
+        assertEquals(productCode, response.getBody().getCode());
+        assertEquals(productName, response.getBody().getName());
+        assertEquals(unitValue, response.getBody().getUnitValue());
+        assertEquals(stock, response.getBody().getStock());
     }
 
     @Test
