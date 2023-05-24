@@ -13,4 +13,5 @@ public interface ISale {
 
     String makeSale(int documentClient, List<CartItem> cartItems, String address);
 
+    String undoSale();
 }

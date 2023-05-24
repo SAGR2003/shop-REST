@@ -1,7 +1,9 @@
 package com.shop.service;
+
 import com.shop.model.CartItem;
 import com.shop.model.Product;
 import com.shop.model.Sale;
+import com.shop.model.SaleMemento;
 import com.shop.repository.CartItemRepository;
 import com.shop.repository.ProductRepository;
 import com.shop.repository.SaleRepository;
@@ -12,8 +14,10 @@ import com.shop.service.exception.ProductNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.sql.Date;
 import java.util.List;
+import java.util.Stack;
 
 @Service
 @AllArgsConstructor
@@ -22,6 +26,7 @@ public class SaleService implements ISale {
     private SaleRepository saleRepository;
     private ProductRepository productRepository;
     private CartItemRepository cartItemRepository;
+    private Stack<SaleMemento> salesHistory;
 
     private Date todaysDate() {
         return new Date(System.currentTimeMillis());
@@ -46,9 +51,14 @@ public class SaleService implements ISale {
         Sale sale;
         validationsToSell(documentClient, cartItems);
         sale = createSale(documentClient, cartItems, address);
+        saveToHistory(sale);
         saleRepository.save(sale);
         saveCartItems(sale.getId(), cartItems);
         return createBill(sale);
+    }
+
+    private void saveToHistory(Sale sale) {
+        salesHistory.push(new SaleMemento(sale));
     }
 
     private Sale createSale(int documentClient, List<CartItem> cartItems, String address) {
@@ -119,4 +129,26 @@ public class SaleService implements ISale {
             }
         }
     }
+
+    private void restoreSale(SaleMemento saleMemento) {
+        Sale restoredSale = saleMemento.getSale();
+        saleRepository.deleteById(restoredSale.getId());
+        List<CartItem> cartItems = restoredSale.getCartItems();
+        for (CartItem item : cartItems) {
+            Product product = productRepository.getById(item.getProductCode());
+            product.setStock(product.getStock() + item.getQuantity());
+            productRepository.save(product);
+        }
+    }
+
+    public String undoSale() {
+        if (!salesHistory.isEmpty()) {
+            SaleMemento previousSale = salesHistory.pop();
+            restoreSale(previousSale);
+            return "The sale was undone successfully";
+        }
+        return "There are no sales to undo";
+    }
+
+
 }

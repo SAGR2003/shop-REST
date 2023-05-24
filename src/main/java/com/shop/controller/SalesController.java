@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
@@ -52,4 +53,10 @@ public class SalesController {
         saleService.makeSale(asyncSale.getDocumentClient(), asyncSale.getCartItems(), asyncSale.getAddress());
     }
 
+    @Operation(summary = "Undo last sale")
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "Request Successfull"), @ApiResponse(code = 500, message = "Unexpected error"), @ApiResponse(code = 400, message = "Bad request. Invalid request syntax")})
+    @PostMapping(path = "/undo")
+    private ResponseDTO undoSell() {
+        return new ResponseDTO(saleService.undoSale());
+    }
 }
