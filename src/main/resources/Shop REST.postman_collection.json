@@ -220,6 +220,26 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Undo sale",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/sales/undo",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"sales",
+								"undo"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		}
