@@ -12,6 +12,7 @@ import com.shop.service.exception.DailyTransactionLimitExceededException;
 import com.shop.service.exception.InsufficientStockException;
 import com.shop.service.exception.ProductNotFoundException;
 import lombok.AllArgsConstructor;
+import lombok.Setter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,10 +24,12 @@ import java.util.Stack;
 @AllArgsConstructor
 @Transactional
 public class SaleService implements ISale {
+    @Setter
+    private Stack<SaleMemento> salesHistory;
     private SaleRepository saleRepository;
     private ProductRepository productRepository;
     private CartItemRepository cartItemRepository;
-    private final Stack<SaleMemento> salesHistory = new Stack<>();
+
 
     private Date todaysDate() {
         return new Date(System.currentTimeMillis());

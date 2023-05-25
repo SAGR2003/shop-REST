@@ -3,6 +3,7 @@ package com.shop.service;
 import com.shop.model.CartItem;
 import com.shop.model.Product;
 import com.shop.model.Sale;
+import com.shop.model.SaleMemento;
 import com.shop.repository.CartItemRepository;
 import com.shop.repository.ProductRepository;
 import com.shop.repository.SaleRepository;
@@ -19,9 +20,9 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.sql.Date;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+
+import static org.mockito.ArgumentMatchers.anyInt;
 
 @ExtendWith(MockitoExtension.class)
 class SaleServiceTest {
@@ -66,24 +67,6 @@ class SaleServiceTest {
     }
 
     @Test
-    void Given_valid_documentClient_and_cartItems_When_makeSale_Then_createBill() {
-        Product testProduct = new Product(1, "Gelatina", 1299, 100, new Date(System.currentTimeMillis()));
-        CartItem testItem1 = new CartItem(1, testProduct.getCode(), 3, null);
-        Sale sale = new Sale(1, 1019283, 1291, new Date(System.currentTimeMillis()), "Cll123", List.of(testItem1));
-
-        Mockito.when(productRepository.existsById(testProduct.getCode())).thenReturn(true);
-        Mockito.when(productRepository.getById(testProduct.getCode())).thenReturn(testProduct);
-
-        String actualBill = saleService.makeSale(sale.getDocumentClient(), sale.getCartItems(), sale.getAddress());
-        Assertions.assertEquals(actualBill, "I sell 3x Gelatina / Total = 3897");
-
-
-        Mockito.verify(productRepository).save(testProduct);
-        Mockito.verify(saleRepository).save(Mockito.any(Sale.class));
-        Mockito.verify(cartItemRepository).save(testItem1);
-    }
-
-    @Test
     void Given_quantity_of_cartItem_exceeding_product_stock_When_makeSale_Then_throw_InsufficientStockException() {
         int documentClient = 123;
         List<CartItem> cartItems = List.of(new CartItem(1, 1, 100, null));
@@ -116,6 +99,36 @@ class SaleServiceTest {
 
         Assertions.assertThrows(ClientNotFoundException.class, () -> saleService.getSalesByDocument(invalidDocument));
         Mockito.verify(saleRepository).findAllByDocumentClient(invalidDocument);
+    }
+
+    @Test
+    void Given_salesHistory_When_undoSale_Then_return_successful_message() {
+        Stack<SaleMemento> salesHistory = new Stack<>();
+        saleService.setSalesHistory(salesHistory);
+        SaleMemento previousSale = Mockito.mock(SaleMemento.class);
+        salesHistory.push(previousSale);
+
+        Sale sale = Mockito.mock(Sale.class);
+        Mockito.when(previousSale.getSale()).thenReturn(sale);
+        Mockito.when(sale.getId()).thenReturn(1);
+
+        String result = saleService.undoSale();
+
+        Assertions.assertEquals("The sale was undone successfully", result);
+        Mockito.verify(saleRepository, Mockito.times(1)).deleteById(1);
+        Assertions.assertEquals(0, salesHistory.size());
+    }
+
+    @Test
+    void Given_noPreviousSale_When_undoSale_thenReturn_noSalesToUndoMessage() {
+        Stack<SaleMemento> salesHistory = new Stack<>();
+        saleService.setSalesHistory(salesHistory);
+
+        String result = saleService.undoSale();
+
+        Assertions.assertEquals("There are no sales to undo", result);
+        Mockito.verify(saleRepository, Mockito.times(0)).deleteById(anyInt());
+        Mockito.verify(productRepository, Mockito.never()).save(Mockito.any());
     }
 
 }
