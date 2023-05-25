@@ -9,6 +9,7 @@ import com.shop.model.Sale;
 import com.shop.repository.CartItemRepository;
 import com.shop.repository.ProductRepository;
 import com.shop.repository.SaleRepository;
+import com.shop.service.SaleService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,8 @@ class SalesControllerTest extends AbstractTest {
     private CartItemRepository cartItemRepository;
     @Autowired
     private ProductRepository productRepository;
+    @Autowired
+    private SaleService saleService;
 
     @Test
     void When_getAllTransactions_Then_return_all_sales() {
@@ -70,6 +73,18 @@ class SalesControllerTest extends AbstractTest {
         saleRepository.save(sale);
         ResponseEntity<ResponseDTO> response = restTemplate.postForEntity(PATH_SALE + "/1019283/sell", cartItems, ResponseDTO.class);
         assertEquals("I sell 3x Gelatina / Total = 3897", response.getBody().getResponse());
+    }
+
+    @Test
+    void Given_documentClient_and_cartItems_When_undoSell_Then_return_ResponseDTO() {
+        Product testProduct = new Product(1, "Gelatina", 1299, 100, new Date(System.currentTimeMillis()));
+        CartItem testItem1 = new CartItem(1, testProduct.getCode(), 3, 80);
+        List<CartItem> cartItems = List.of(testItem1);
+        productRepository.save(testProduct);
+        cartItemRepository.save(testItem1);
+        saleService.makeSale(1, cartItems, "cll123");
+        ResponseEntity<ResponseDTO> response = restTemplate.postForEntity(PATH_SALE + "/undo", cartItems, ResponseDTO.class);
+        assertEquals("The sale was undone successfully", response.getBody().getResponse());
     }
 
     private List<CartItem> createAndSaveCartItems() {
